@@ -1,0 +1,748 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="page"
+            type="com.dp.truning.ui.fragments.home.HomeFragment" />
+
+        <variable
+            name="vm"
+            type="com.dp.truning.ui.fragments.home.HomeViewModel" />
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_home_gradient">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp"
+                android:paddingTop="24dp"
+                android:paddingBottom="28dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_semi_bold"
+                    android:gravity="center"
+                    android:text="@string/home_title"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/bg_home_hero"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:padding="24dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_home_pill"
+                        android:fontFamily="@font/poppins_medium"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="6dp"
+                        android:text="@string/home_hero_badge"
+                        android:textColor="@color/home_tint_gold"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="18dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="@string/home_hero_title"
+                        android:textColor="@color/white"
+                        android:textSize="28sp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:lineSpacingExtra="4dp"
+                        android:text="@string/home_hero_subtitle"
+                        android:textColor="#D7E8FF"
+                        android:textSize="14sp"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="56dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_home_button_secondary"
+                            android:fontFamily="@font/poppins_semi_bold"
+                            android:gravity="center"
+                            android:onClick="@{page::getMic}"
+                            android:text="@string/home_button_permission"
+                            android:textColor="@color/white"
+                            android:textSize="15sp" />
+
+                        <Space
+                            android:layout_width="12dp"
+                            android:layout_height="1dp" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="56dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_home_button_primary"
+                            android:fontFamily="@font/poppins_semi_bold"
+                            android:gravity="center"
+                            android:onClick="@{page::startTuner}"
+                            android:text="@string/home_button_start"
+                            android:textColor="@color/home_text_primary"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/bg_home_surface"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="18dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            android:fontFamily="@font/poppins_medium"
+                            android:text="@string/home_selected_label"
+                            android:textColor="@color/home_text_secondary"
+                            android:textSize="13sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            android:layout_marginTop="6dp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text='@{vm.name + @string/home_selected_suffix}'
+                            android:textColor="@color/home_text_primary"
+                            android:textSize="24sp"
+                            tools:text="5" />
+
+                        <TextView
+                            android:id="@+id/tv_auto_detect_summary"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:text="@string/home_auto_detect_summary_on"
+                            android:textColor="@color/home_text_secondary"
+                            android:textSize="12sp"
+                            tools:text="已开启自动识别：会根据当前音高自动切换琴弦。" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_home_pill"
+                            android:fontFamily="@font/poppins_medium"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="6dp"
+                            android:text="琴头"
+                            android:textColor="@color/home_overlay"
+                            android:textSize="12sp"
+                            android:visibility="gone" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switch_auto_detect"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@={vm.autoDetectEnabled}"
+                            android:fontFamily="@font/poppins_medium"
+                            android:text="@string/home_auto_detect_toggle"
+                            android:textColor="@color/home_text_primary"
+                            android:textSize="13sp"
+                            app:thumbTint="@color/home_tint_blue"
+                            app:trackTint="@color/home_stroke" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/bg_home_status"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_semi_bold"
+                        android:text="@string/home_status_title"
+                        android:visibility="gone"
+                        android:textColor="@color/home_text_primary"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/tv_tip"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/poppins_semi_bold"
+                        android:lineSpacingExtra="6dp"
+                        android:text="@string/home_status_placeholder"
+                        android:textColor="@color/home_text_primary"
+                        android:textSize="20sp"
+                        tools:text="准备调音" />
+
+                    <TextView
+                        android:id="@+id/tv_pitch_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:fontFamily="@font/poppins_semi_bold"
+                        android:gravity="center"
+                        android:text="音准：等待检测"
+                        android:textColor="@color/home_text_primary"
+                        android:textSize="16sp" />
+
+                    <FrameLayout
+                        android:id="@+id/pitch_pointer_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:layout_marginTop="10dp"
+                        android:clipChildren="false"
+                        android:clipToPadding="false">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="8dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/bg_pitch_meter_track" />
+
+                        <View
+                            android:layout_width="3dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:background="@color/green" />
+
+                        <TextView
+                            android:id="@+id/tv_pitch_pointer"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/poppins_bold"
+                            android:gravity="center"
+                            android:text="▼"
+                            android:textColor="@color/home_text_primary"
+                            android:textSize="24sp" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:id="@+id/pitch_scale_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_medium"
+                            android:gravity="start"
+                            android:text="低"
+                            android:textColor="@color/home_text_secondary"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_medium"
+                            android:gravity="center"
+                            android:text="准"
+                            android:textColor="@color/green"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_medium"
+                            android:gravity="end"
+                            android:text="高"
+                            android:textColor="@color/home_text_secondary"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_gauge_helper"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:text="@string/home_status_helper"
+                        android:textColor="@color/home_text_secondary"
+                        android:textSize="13sp"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:id="@+id/numeric_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/tv_numeric_note"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_bold"
+                            android:gravity="center"
+                            android:text="--"
+                            android:textColor="@color/home_text_primary"
+                            android:textSize="28sp"
+                            tools:text="A4" />
+
+                        <TextView
+                            android:id="@+id/tv_numeric_frequency"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="@font/poppins_semi_bold"
+                            android:gravity="center"
+                            android:text="0.00 Hz"
+                            android:textColor="@color/home_text_primary"
+                            android:textSize="16sp"
+                            tools:text="440.00 Hz" />
+
+                        <TextView
+                            android:id="@+id/tv_numeric_cents"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:gravity="center"
+                            android:text="0.0 cents"
+                            android:textColor="@color/home_text_secondary"
+                            android:textSize="14sp"
+                            tools:text="-3.2 cents" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/bg_home_status"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_semi_bold"
+                        android:text="@string/home_strings_title"
+                        android:textColor="@color/home_text_primary"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:text="@string/home_strings_subtitle"
+                        android:textColor="@color/home_text_secondary"
+                        android:textSize="13sp" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="430dp"
+                        android:layout_marginTop="18dp">
+
+                        <View
+                            android:id="@+id/headstock"
+                            android:layout_width="132dp"
+                            android:layout_height="292dp"
+                            android:background="@drawable/bg_home_headstock"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <View
+                            android:id="@+id/neck"
+                            android:layout_width="72dp"
+                            android:layout_height="146dp"
+                            android:background="@drawable/bg_home_headstock_neck"
+                            app:layout_constraintEnd_toEndOf="@id/headstock"
+                            app:layout_constraintStart_toStartOf="@id/headstock"
+                            app:layout_constraintTop_toBottomOf="@id/headstock" />
+
+                        <TextView
+                            android:id="@+id/headstockBrand"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="34dp"
+                            android:alpha="0.9"
+                            android:fontFamily="@font/poppins_bold"
+                            android:letterSpacing="0.12"
+                            android:text="吉他"
+                            android:textColor="#FFF7E7"
+                            android:textSize="16sp"
+                            app:layout_constraintEnd_toEndOf="@id/headstock"
+                            app:layout_constraintStart_toStartOf="@id/headstock"
+                            app:layout_constraintTop_toTopOf="@id/headstock" />
+
+                        <TextView
+                            android:id="@+id/headstockMode"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/bg_home_pill"
+                            android:fontFamily="@font/poppins_medium"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="6dp"
+                            android:text="标准调弦"
+                            android:textColor="@color/home_overlay"
+                            android:textSize="10sp"
+                            app:layout_constraintEnd_toEndOf="@id/headstock"
+                            app:layout_constraintStart_toStartOf="@id/headstock"
+                            app:layout_constraintTop_toBottomOf="@id/headstockBrand" />
+
+                        <View
+                            android:id="@+id/stemLeftTop"
+                            android:layout_width="18dp"
+                            android:layout_height="10dp"
+                            android:background="@drawable/bg_home_tuner_stem"
+                            app:layout_constraintEnd_toStartOf="@id/headstock"
+                            app:layout_constraintTop_toTopOf="@id/guideTop1" />
+
+                        <View
+                            android:id="@+id/stemLeftMid"
+                            android:layout_width="18dp"
+                            android:layout_height="10dp"
+                            android:background="@drawable/bg_home_tuner_stem"
+                            app:layout_constraintEnd_toStartOf="@id/headstock"
+                            app:layout_constraintTop_toTopOf="@id/guideTop2" />
+
+                        <View
+                            android:id="@+id/stemLeftBottom"
+                            android:layout_width="18dp"
+                            android:layout_height="10dp"
+                            android:background="@drawable/bg_home_tuner_stem"
+                            app:layout_constraintEnd_toStartOf="@id/headstock"
+                            app:layout_constraintTop_toTopOf="@id/guideTop3" />
+
+                        <View
+                            android:id="@+id/stemRightTop"
+                            android:layout_width="18dp"
+                            android:layout_height="10dp"
+                            android:background="@drawable/bg_home_tuner_stem"
+                            app:layout_constraintStart_toEndOf="@id/headstock"
+                            app:layout_constraintTop_toTopOf="@id/guideTop1" />
+
+                        <View
+                            android:id="@+id/stemRightMid"
+                            android:layout_width="18dp"
+                            android:layout_height="10dp"
+                            android:background="@drawable/bg_home_tuner_stem"
+                            app:layout_constraintStart_toEndOf="@id/headstock"
+                            app:layout_constraintTop_toTopOf="@id/guideTop2" />
+
+                        <View
+                            android:id="@+id/stemRightBottom"
+                            android:layout_width="18dp"
+                            android:layout_height="10dp"
+                            android:background="@drawable/bg_home_tuner_stem"
+                            app:layout_constraintStart_toEndOf="@id/headstock"
+                            app:layout_constraintTop_toTopOf="@id/guideTop3" />
+
+                        <LinearLayout
+                            android:id="@+id/knobGroup1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical"
+                            app:layout_constraintEnd_toStartOf="@id/stemLeftTop"
+                            app:layout_constraintTop_toTopOf="@id/stemLeftTop">
+
+                            <TextView
+                                android:id="@+id/knob1"
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:background="@drawable/bg_home_tuner_knob"
+                                android:fontFamily="@font/poppins_bold"
+                                android:gravity="center"
+                                android:text="1"
+                                android:textColor="@color/text_tuner_knob"
+                                android:textSize="20sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:fontFamily="@font/poppins_semi_bold"
+                                android:text="高音E"
+                                android:textColor="@color/home_text_secondary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/knobGroup2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical"
+                            app:layout_constraintEnd_toStartOf="@id/stemLeftMid"
+                            app:layout_constraintTop_toTopOf="@id/stemLeftMid">
+
+                            <TextView
+                                android:id="@+id/knob2"
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:background="@drawable/bg_home_tuner_knob"
+                                android:fontFamily="@font/poppins_bold"
+                                android:gravity="center"
+                                android:text="2"
+                                android:textColor="@color/text_tuner_knob"
+                                android:textSize="20sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:fontFamily="@font/poppins_semi_bold"
+                                android:text="B"
+                                android:textColor="@color/home_text_secondary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/knobGroup3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical"
+                            app:layout_constraintEnd_toStartOf="@id/stemLeftBottom"
+                            app:layout_constraintTop_toTopOf="@id/stemLeftBottom">
+
+                            <TextView
+                                android:id="@+id/knob3"
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:background="@drawable/bg_home_tuner_knob"
+                                android:fontFamily="@font/poppins_bold"
+                                android:gravity="center"
+                                android:text="3"
+                                android:textColor="@color/text_tuner_knob"
+                                android:textSize="20sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:fontFamily="@font/poppins_semi_bold"
+                                android:text="G"
+                                android:textColor="@color/home_text_secondary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/knobGroup4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical"
+                            app:layout_constraintStart_toEndOf="@id/stemRightTop"
+                            app:layout_constraintTop_toTopOf="@id/stemRightTop">
+
+                            <TextView
+                                android:id="@+id/knob4"
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:background="@drawable/bg_home_tuner_knob"
+                                android:fontFamily="@font/poppins_bold"
+                                android:gravity="center"
+                                android:text="4"
+                                android:textColor="@color/text_tuner_knob"
+                                android:textSize="20sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:fontFamily="@font/poppins_semi_bold"
+                                android:text="D"
+                                android:textColor="@color/home_text_secondary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/knobGroup5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical"
+                            app:layout_constraintStart_toEndOf="@id/stemRightMid"
+                            app:layout_constraintTop_toTopOf="@id/stemRightMid">
+
+                            <TextView
+                                android:id="@+id/knob5"
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:background="@drawable/bg_home_tuner_knob"
+                                android:fontFamily="@font/poppins_bold"
+                                android:gravity="center"
+                                android:text="5"
+                                android:textColor="@color/text_tuner_knob"
+                                android:textSize="20sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:fontFamily="@font/poppins_semi_bold"
+                                android:text="A"
+                                android:textColor="@color/home_text_secondary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/knobGroup6"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical"
+                            app:layout_constraintStart_toEndOf="@id/stemRightBottom"
+                            app:layout_constraintTop_toTopOf="@id/stemRightBottom">
+
+                            <TextView
+                                android:id="@+id/knob6"
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:background="@drawable/bg_home_tuner_knob"
+                                android:fontFamily="@font/poppins_bold"
+                                android:gravity="center"
+                                android:text="6"
+                                android:textColor="@color/text_tuner_knob"
+                                android:textSize="20sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:fontFamily="@font/poppins_semi_bold"
+                                android:text="低音E"
+                                android:textColor="@color/home_text_secondary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="40dp"
+                            android:background="@drawable/bg_home_pill"
+                            android:fontFamily="@font/poppins_semi_bold"
+                            android:paddingHorizontal="14dp"
+                            android:paddingVertical="8dp"
+                            android:text='@{"SELECTED  STRING  " + vm.name + "  ·  " + vm.selectedLabel}'
+                            android:textColor="@color/home_overlay"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="@id/headstock"
+                            app:layout_constraintEnd_toEndOf="@id/headstock"
+                            app:layout_constraintStart_toStartOf="@id/headstock" />
+
+                        <androidx.constraintlayout.widget.Guideline
+                            android:id="@+id/guideTop1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            app:layout_constraintGuide_begin="94dp" />
+
+                        <androidx.constraintlayout.widget.Guideline
+                            android:id="@+id/guideTop2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            app:layout_constraintGuide_begin="180dp" />
+
+                        <androidx.constraintlayout.widget.Guideline
+                            android:id="@+id/guideTop3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            app:layout_constraintGuide_begin="266dp" />
+
+                        <androidx.constraintlayout.widget.Guideline
+                            android:id="@+id/guideHeadLeft"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintGuide_percent="0.14" />
+
+                        <androidx.constraintlayout.widget.Guideline
+                            android:id="@+id/guideHeadRight"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintGuide_percent="0.86" />
+
+                        <androidx.constraintlayout.widget.Barrier
+                            android:id="@+id/leftBarrier"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            app:barrierDirection="end"
+                            app:constraint_referenced_ids="knobGroup1,knobGroup2,knobGroup3" />
+
+                        <androidx.constraintlayout.widget.Barrier
+                            android:id="@+id/rightBarrier"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            app:barrierDirection="start"
+                            app:constraint_referenced_ids="knobGroup4,knobGroup5,knobGroup6" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
+
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </FrameLayout>
+</layout>

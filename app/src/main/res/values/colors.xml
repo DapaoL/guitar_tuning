@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorSecondary">#599FFE</color>
+    <color name="colorSecondaryVariant">#3A91DD</color>
+    <color name="colorPrimaryVariant">#6D83FF</color>
+    <color name="colorPrimary">#0074D9</color>
+    <color name="colorBorder">#E0E0E0</color>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="textColor">#686868</color>
+    <color name="buttonColor">#0074D9</color>
+    <color name="speed_icon">#D5CB0D</color>
+    <color name="spin_icon">#FF9900</color>
+    <color name="red">#FF0000</color>
+    <color name="blue">#0339DA</color>
+    <color name="green">#00D304</color>
+
+    <color name="home_bg_top">#08111F</color>
+    <color name="home_bg_bottom">#102B52</color>
+    <color name="home_surface">#F7F9FD</color>
+    <color name="home_surface_strong">#FFFFFF</color>
+    <color name="home_text_primary">#10203B</color>
+    <color name="home_text_secondary">#6F7E95</color>
+    <color name="home_tint_blue">#5DA8FF</color>
+    <color name="home_tint_cyan">#7FE7FF</color>
+    <color name="home_tint_gold">#FFD36E</color>
+    <color name="home_stroke">#DCE5F2</color>
+    <color name="home_overlay">#1C2F4D</color>
+    <color name="home_wood_light">#B17844</color>
+    <color name="home_wood_dark">#6C4121</color>
+
+    <color name="settings_bg_top">#0B1014</color>
+    <color name="settings_bg_bottom">#171E24</color>
+    <color name="settings_surface_strong">#1C252D</color>
+    <color name="settings_surface_soft">#141A20</color>
+    <color name="settings_surface_warm_top">#2A3138</color>
+    <color name="settings_surface_warm_bottom">#13181C</color>
+    <color name="settings_surface_primary_top">#263037</color>
+    <color name="settings_surface_primary_bottom">#151A1F</color>
+    <color name="settings_text_primary">#F0F4F7</color>
+    <color name="settings_text_secondary">#95A7B1</color>
+    <color name="settings_text_muted">#6F818B</color>
+    <color name="settings_border">#31404A</color>
+    <color name="settings_border_strong">#516573</color>
+    <color name="settings_accent_gold">#D6A45A</color>
+    <color name="settings_accent_gold_soft">#705234</color>
+    <color name="settings_accent_green">#7BE2B5</color>
+    <color name="settings_accent_green_soft">#18362E</color>
+    <color name="settings_input_fill">#10161A</color>
+    <color name="settings_error">#F38B8B</color>
+</resources>
