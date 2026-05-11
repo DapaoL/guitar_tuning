@@ -18,6 +18,9 @@ public final class XmlUtils {
     private XmlUtils() {
     }
 
+    /**
+     * 设置 radius。
+     */
     @BindingAdapter("radius")
     public static void setRadius(View view, float radiusDp) {
         float radiusPx = view.getContext().getResources().getDisplayMetrics().density * radiusDp;

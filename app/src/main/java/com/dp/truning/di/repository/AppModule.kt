@@ -15,11 +15,17 @@ import retrofit2.Retrofit
 @InstallIn(ViewModelComponent::class)
 class AppModule {
 
+    /**
+     * 提供 app service。
+     */
     @Provides
     internal fun provideAppService(retrofit: Retrofit): AppService {
         return retrofit.create(AppService::class.java)
     }
 
+    /**
+     * 提供 example repository。
+     */
     @Provides
     internal fun provideExampleRepository(appService: AppService, exampleDao: ExampleDao): ExampleRepository {
         return ExampleRepositoryImp(appService, exampleDao)

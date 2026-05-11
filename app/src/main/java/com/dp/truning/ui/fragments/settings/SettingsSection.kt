@@ -14,6 +14,9 @@ enum class SettingsSection(
     ABOUT(R.string.settings_item_about, true);
 
     companion object {
+        /**
+         * 将当前值转换为 P level。
+         */
         fun topLevel(): List<SettingsSection> = listOf(
             TUNER,
             METRONOME,

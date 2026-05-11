@@ -11,6 +11,9 @@ import org.junit.runner.RunWith
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
+    /**
+     * 处理 use app context 相关逻辑。
+     */
 @RunWith(AndroidJUnit4::class) class ExampleInstrumentedTest {
     @Test fun useAppContext() {
         // Context of the app under test.

@@ -31,6 +31,9 @@ object GuitarTone {
     val standardStrings: List<GuitarString>
         get() = standardStrings(TunerSettings.DEFAULT_REFERENCE_A4_HZ)
 
+    /**
+     * 返回按当前 A4 参考频率换算后的标准弦列表。
+     */
     fun standardStrings(referenceA4Hz: Int = TunerSettings.DEFAULT_REFERENCE_A4_HZ): List<GuitarString> {
         val safeReferenceA4 = TunerSettings.sanitizeReferenceA4(referenceA4Hz)
         val ratio = safeReferenceA4 / 440f
@@ -39,11 +42,17 @@ object GuitarTone {
         }
     }
 
+    /**
+     * 返回指定索引处的标准弦信息。
+     */
     fun standardStringAt(
         index: Int,
         referenceA4Hz: Int = TunerSettings.DEFAULT_REFERENCE_A4_HZ
     ): GuitarString? = standardStrings(referenceA4Hz).getOrNull(index)
 
+    /**
+     * 查找与当前频率最接近的琴弦索引。
+     */
     fun findClosestStringIndex(
         freq: Float,
         referenceA4Hz: Int = TunerSettings.DEFAULT_REFERENCE_A4_HZ,

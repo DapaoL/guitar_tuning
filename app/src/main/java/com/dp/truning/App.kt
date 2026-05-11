@@ -5,6 +5,9 @@ import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class App : Application() {
+    /**
+     * 在组件创建时完成初始化。
+     */
     override fun onCreate() {
         super.onCreate()
 //        BRV.modelId = BR.item

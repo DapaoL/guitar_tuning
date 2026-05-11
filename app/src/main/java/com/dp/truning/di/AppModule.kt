@@ -13,6 +13,9 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+    /**
+     * 提供 application scope。
+     */
     @ApplicationScope
     @Provides
     @Singleton

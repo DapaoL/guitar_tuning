@@ -22,6 +22,9 @@ class HomeViewModel @Inject constructor(
     var autoDetectEnabled = MutableLiveData(true)
     val tunerSettings = MutableLiveData(TunerSettings())
 
+    /**
+     * 处理 refresh tuner settings 相关逻辑。
+     */
     fun refreshTunerSettings() {
         tunerSettings.value = preferences.getTunerSettings()
     }

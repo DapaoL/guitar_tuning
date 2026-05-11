@@ -41,6 +41,9 @@ class AudioRecordTarsosInputStream(
         }
     }
 
+    /**
+     * 跳过指定长度的数据。
+     */
     override fun skip(bytesToSkip: Long): Long {
         ensureOpen()
         if (bytesToSkip <= 0) {
@@ -60,6 +63,9 @@ class AudioRecordTarsosInputStream(
         return skipped
     }
 
+    /**
+     * 从底层输入源读取指定长度的数据。
+     */
     override fun read(b: ByteArray, off: Int, len: Int): Int {
         ensureOpen()
         ensureStarted()
@@ -83,6 +89,9 @@ class AudioRecordTarsosInputStream(
         }
     }
 
+    /**
+     * 关闭当前资源并释放底层对象。
+     */
     override fun close() {
         if (closed) {
             return
@@ -98,10 +107,19 @@ class AudioRecordTarsosInputStream(
         audioRecord.release()
     }
 
+    /**
+     * 返回当前输入流使用的音频格式。
+     */
     override fun getFormat(): TarsosDSPAudioFormat = format
 
+    /**
+     * 返回当前输入流的帧长度信息。
+     */
     override fun getFrameLength(): Long = -1L
 
+    /**
+     * 确保底层录音器已经开始采集。
+     */
     private fun ensureStarted() {
         if (!started) {
             audioRecord.startRecording()
@@ -109,6 +127,9 @@ class AudioRecordTarsosInputStream(
         }
     }
 
+    /**
+     * 确保当前输入流尚未关闭。
+     */
     private fun ensureOpen() {
         check(!closed) { "Audio input stream already closed" }
     }

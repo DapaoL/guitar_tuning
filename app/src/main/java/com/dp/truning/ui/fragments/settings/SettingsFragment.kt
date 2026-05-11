@@ -14,6 +14,9 @@ import dagger.hilt.android.AndroidEntryPoint
 class SettingsFragment : BaseFragment<FragmentSettingsBinding, SettingsViewModel>() {
     private var isUpdatingSelectionFromState = false
 
+    /**
+     * 在视图创建完成后绑定界面状态与交互。
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.vm = viewModel
@@ -22,11 +25,17 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding, SettingsViewModel
         bindObservers()
     }
 
+    /**
+     * 在界面恢复可见时刷新当前状态。
+     */
     override fun onResume() {
         super.onResume()
         viewModel.loadSettings()
     }
 
+    /**
+     * 处理 init view 相关逻辑。
+     */
     private fun initView() {
         binding.buttonBack.setOnClickListener {
             (parentFragment as? SettingsNavigationHost)?.goBackFromSettingsChild()
@@ -66,6 +75,9 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding, SettingsViewModel
         }
     }
 
+    /**
+     * 绑定 observers。
+     */
     private fun bindObservers() {
         viewModel.referenceA4Input.observe(viewLifecycleOwner) { input ->
             val current = binding.etReferenceA4.text?.toString().orEmpty()

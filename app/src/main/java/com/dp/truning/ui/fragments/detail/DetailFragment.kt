@@ -40,6 +40,9 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
     private val beatHandler = Handler(Looper.getMainLooper())
     private var visualBeatIndex = 0
     private val beatVisualizerRunnable = object : Runnable {
+        /**
+         * 处理 run 相关逻辑。
+         */
         override fun run() {
             showBeat(visualBeatIndex)
             visualBeatIndex = (visualBeatIndex + 1) % BEATS_PER_BAR
@@ -47,6 +50,9 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         }
     }
 
+    /**
+     * 在视图创建完成后绑定界面状态与交互。
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.page = this
@@ -59,6 +65,9 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         resetBeatVisualizer()
     }
 
+    /**
+     * 处理 start 相关逻辑。
+     */
     fun start(@Suppress("UNUSED_PARAMETER") view: View) {
         if (generator != null) return
         if (!syncCustomBpm()) return
@@ -75,6 +84,9 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         updatePlayPauseButton()
     }
 
+    /**
+     * 处理 stop 相关逻辑。
+     */
     fun stop(@Suppress("UNUSED_PARAMETER") view: View) {
         generator?.stop()
         generator = null
@@ -85,6 +97,9 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         updatePlayPauseButton()
     }
 
+    /**
+     * 将当前值转换为 ggle playback。
+     */
     fun togglePlayback(view: View) {
         if (generator == null) {
             start(view)
@@ -93,15 +108,24 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         }
     }
 
+    /**
+     * 应用 custom speed。
+     */
     fun applyCustomSpeed(@Suppress("UNUSED_PARAMETER") view: View) {
         syncCustomBpm()
     }
 
+    /**
+     * 在视图销毁时释放与界面相关的资源。
+     */
     override fun onDestroyView() {
         stop(requireView())
         super.onDestroyView()
     }
 
+    /**
+     * 同步 custom bpm。
+     */
     private fun syncCustomBpm(): Boolean {
         val customBpm = binding.bpmInput.text.toString().trim().toIntOrNull()
         if (customBpm == null || customBpm !in MIN_BPM..MAX_BPM) {
@@ -116,10 +140,16 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         return true
     }
 
+    /**
+     * 更新 bpm label。
+     */
     private fun updateBpmLabel() {
         binding.currentBpmText.text = bpm.toString()
     }
 
+    /**
+     * 更新 play pause button。
+     */
     private fun updatePlayPauseButton() {
         val isPlaying = generator != null
         binding.playPauseButton.setImageResource(
@@ -128,6 +158,9 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         binding.playPauseButton.contentDescription = if (isPlaying) "暂停" else "播放"
     }
 
+    /**
+     * 更新 bpm input。
+     */
     private fun updateBpmInput() {
         val text = bpm.toString()
         if (binding.bpmInput.text.toString() != text) {
@@ -137,6 +170,9 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         binding.bpmInput.error = null
     }
 
+    /**
+     * 应用 bpm。
+     */
     private fun applyBpm(
         newBpm: Int,
         updateInput: Boolean,
@@ -153,17 +189,26 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         }
     }
 
+    /**
+     * 启动 ring rotation。
+     */
     private fun startRingRotation() {
         binding.metronomeRingMarkerContainer.animate().cancel()
         updateRingRotationSpeed(forceStart = true)
     }
 
+    /**
+     * 停止 ring rotation。
+     */
     private fun stopRingRotation() {
         ringRotationAnimator?.cancel()
         ringRotationAnimator = null
         updateRingRotationFromBpm()
     }
 
+    /**
+     * 更新 ring rotation speed。
+     */
     private fun updateRingRotationSpeed(forceStart: Boolean = false) {
         if (isUserRotatingRing) return
         if (!forceStart && ringRotationAnimator == null) return
@@ -185,6 +230,9 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         }
     }
 
+    /**
+     * 配置 ring speed control。
+     */
     private fun setupRingSpeedControl() {
         binding.metronomeRingMarkerContainer.setOnTouchListener { ring, event ->
             when (event.actionMasked) {
@@ -217,6 +265,9 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         }
     }
 
+    /**
+     * 处理 bpm from touch 相关逻辑。
+     */
     private fun bpmFromTouch(event: MotionEvent, ring: View): Int {
         val centerX = ring.width / 2f
         val centerY = ring.height / 2f
@@ -230,22 +281,34 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         return bpmFromRingRotation(normalizedAngle)
     }
 
+    /**
+     * 更新 ring rotation from bpm。
+     */
     private fun updateRingRotationFromBpm() {
         if (ringRotationAnimator != null || isUserRotatingRing) return
         binding.metronomeRingMarkerContainer.rotation = ringRotationFromBpm(bpm)
     }
 
+    /**
+     * 启动 beat visualizer。
+     */
     private fun startBeatVisualizer() {
         visualBeatIndex = 0
         beatHandler.removeCallbacks(beatVisualizerRunnable)
         beatVisualizerRunnable.run()
     }
 
+    /**
+     * 停止 beat visualizer。
+     */
     private fun stopBeatVisualizer() {
         beatHandler.removeCallbacks(beatVisualizerRunnable)
         resetBeatVisualizer()
     }
 
+    /**
+     * 处理 reset beat visualizer 相关逻辑。
+     */
     private fun resetBeatVisualizer() {
         val blocks = beatBlocks()
         blocks.forEach { block ->
@@ -256,6 +319,9 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         }
     }
 
+    /**
+     * 显示 beat。
+     */
     private fun showBeat(activeIndex: Int) {
         beatBlocks().forEachIndexed { index, block ->
             val background = when {
@@ -277,6 +343,9 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         }
     }
 
+    /**
+     * 处理 beat blocks 相关逻辑。
+     */
     private fun beatBlocks() = listOf(
         binding.beatBlock1,
         binding.beatBlock2,
@@ -284,29 +353,47 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         binding.beatBlock4
     )
 
+    /**
+     * 处理 beat interval millis 相关逻辑。
+     */
     private fun beatIntervalMillis(): Long {
         return (60_000L / bpm.coerceIn(MIN_BPM, MAX_BPM)).coerceAtLeast(1L)
     }
 
+    /**
+     * 处理 ring rotation duration millis 相关逻辑。
+     */
     private fun ringRotationDurationMillis(): Long {
         val beatsPerRotation = RING_ROTATION_BEATS_PER_CYCLE / ringRotationSpeedMultiplier()
         return (beatIntervalMillis() * beatsPerRotation).toLong().coerceAtLeast(1L)
     }
 
+    /**
+     * 处理 ring rotation speed multiplier 相关逻辑。
+     */
     private fun ringRotationSpeedMultiplier(): Float {
         return RING_ROTATION_SPEED_MULTIPLIER.coerceAtLeast(0.1f)
     }
 
+    /**
+     * 处理 ring rotation from bpm 相关逻辑。
+     */
     private fun ringRotationFromBpm(value: Int): Float {
         val normalizedBpm = (value.coerceIn(MIN_BPM, MAX_BPM) - MIN_BPM).toFloat() / BPM_RANGE
         return normalizedBpm * FULL_ROTATION_DEGREES
     }
 
+    /**
+     * 处理 bpm from ring rotation 相关逻辑。
+     */
     private fun bpmFromRingRotation(rotation: Float): Int {
         val normalizedRotation = normalizeDegrees(rotation) / FULL_ROTATION_DEGREES
         return (MIN_BPM + normalizedRotation * BPM_RANGE).roundToInt().coerceIn(MIN_BPM, MAX_BPM)
     }
 
+    /**
+     * 处理 normalize degrees 相关逻辑。
+     */
     private fun normalizeDegrees(degrees: Float): Float {
         return ((degrees % FULL_ROTATION_DEGREES) + FULL_ROTATION_DEGREES) % FULL_ROTATION_DEGREES
     }
@@ -332,6 +419,9 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         private val clickFreq = 1000.0
         private var sampleCounter = 0L
 
+        /**
+         * 处理当前音频缓冲区。
+         */
         override fun process(audioEvent: AudioEvent): Boolean {
             val buf = audioEvent.floatBuffer
             val intervalSamples = (sampleRate * 60.0 / bpm).toLong().coerceAtLeast(1L)
@@ -347,6 +437,9 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
             return true
         }
 
+        /**
+         * 在处理结束后执行收尾逻辑。
+         */
         override fun processingFinished() {}
     }
 
@@ -376,6 +469,9 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
             track.play()
         }
 
+        /**
+         * 处理当前音频缓冲区。
+         */
         override fun process(audioEvent: AudioEvent): Boolean {
             val floats = audioEvent.floatBuffer
             val n = floats.size
@@ -388,6 +484,9 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
             return true
         }
 
+        /**
+         * 在处理结束后执行收尾逻辑。
+         */
         override fun processingFinished() {
             try {
                 track.stop()

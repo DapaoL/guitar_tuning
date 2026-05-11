@@ -25,6 +25,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
     private var bottomSafeArea: Int = 0
 
     private val safeAreaLifecycleCallbacks = object : FragmentManager.FragmentLifecycleCallbacks() {
+        /**
+         * 在子 Fragment 视图创建后补齐底部安全区域。
+         */
         override fun onFragmentViewCreated(
             fm: FragmentManager,
             fragment: Fragment,
@@ -39,6 +42,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         const val EXTRA_SKIP_HOME_AUTO_ENTRY = "skip_home_auto_entry"
     }
 
+    /**
+     * 在组件创建时完成初始化。
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.i(TAG, "onCreate()")
@@ -61,17 +67,26 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         }
     }
 
+    /**
+     * 在组件销毁前释放相关资源。
+     */
     override fun onDestroy() {
         supportFragmentManager.unregisterFragmentLifecycleCallbacks(safeAreaLifecycleCallbacks)
         super.onDestroy()
     }
 
+    /**
+     * 处理 switch 1 相关逻辑。
+     */
     private fun switch1(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.nav_host_fragment, fragment)
             .commit()
     }
 
+    /**
+     * 返回到 previous primary tab。
+     */
     fun returnToPreviousPrimaryTab() {
         val targetTabId = if (previousPrimaryTabId == R.id.tab_mine) {
             R.id.tab_home
@@ -81,6 +96,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         binding.bottomNav.selectedItemId = targetTabId
     }
 
+    /**
+     * 处理 switch primary tab 相关逻辑。
+     */
     private fun switchPrimaryTab(tabId: Int) {
         if (currentPrimaryTabId != tabId) {
             previousPrimaryTabId = currentPrimaryTabId
@@ -94,6 +112,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         }
     }
 
+    /**
+     * 处理 switch 相关逻辑。
+     */
     private fun switch(target: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
 
@@ -110,6 +131,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         transaction.commit()
     }
 
+    /**
+     * 配置 bottom safe area handling。
+     */
     private fun setupBottomSafeAreaHandling() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
             navigationBarInsetBottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
@@ -127,6 +151,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         }
     }
 
+    /**
+     * 更新 bottom safe area。
+     */
     private fun updateBottomSafeArea() {
         val layoutParams = binding.bottomNav.layoutParams as? android.widget.FrameLayout.LayoutParams ?: return
         val safeArea = binding.bottomNav.height + layoutParams.bottomMargin + navigationBarInsetBottom
@@ -141,6 +168,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         }
     }
 
+    /**
+     * 应用 bottom safe area。
+     */
     private fun applyBottomSafeArea(view: View) {
         val originalBottomPadding = (view.getTag(R.id.tag_original_bottom_padding) as? Int)
             ?: view.paddingBottom.also { view.setTag(R.id.tag_original_bottom_padding, it) }

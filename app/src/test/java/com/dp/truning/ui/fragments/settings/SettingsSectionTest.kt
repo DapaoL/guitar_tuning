@@ -8,6 +8,9 @@ import org.junit.Test
 
 class SettingsSectionTest {
 
+    /**
+     * 验证 top level sections keep approved order。
+     */
     @Test
     fun topLevelSections_keepApprovedOrder() {
         assertEquals(
@@ -22,6 +25,9 @@ class SettingsSectionTest {
         )
     }
 
+    /**
+     * 验证 only tuner section is not placeholder。
+     */
     @Test
     fun onlyTunerSection_isNotPlaceholder() {
         assertFalse(SettingsSection.TUNER.usesPlaceholder)
@@ -31,6 +37,9 @@ class SettingsSectionTest {
         assertTrue(SettingsSection.ABOUT.usesPlaceholder)
     }
 
+    /**
+     * 验证 top level sections map to expected title resources。
+     */
     @Test
     fun topLevelSections_mapToExpectedTitleResources() {
         assertEquals(R.string.settings_item_tuner, SettingsSection.TUNER.titleRes)

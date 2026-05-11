@@ -15,6 +15,9 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class PreferencesModule {
 
+    /**
+     * 提供 preferences。
+     */
     @Provides
     @Singleton
     fun providePreferences(@ApplicationContext context: Context): Preferences {

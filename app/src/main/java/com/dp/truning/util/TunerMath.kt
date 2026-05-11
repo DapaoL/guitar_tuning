@@ -6,6 +6,9 @@ import kotlin.math.roundToInt
 object TunerMath {
     private val noteNames = arrayOf("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B")
 
+    /**
+     * 根据频率和参考 A4 计算音名。
+     */
     fun noteName(freq: Float, referenceA4Hz: Int): String {
         if (!freq.isFinite() || freq <= 0f || referenceA4Hz <= 0) {
             return "--"
@@ -18,6 +21,9 @@ object TunerMath {
         return "${noteNames[noteIndex]}$octave"
     }
 
+    /**
+     * 计算当前频率相对目标频率的音分偏差。
+     */
     fun centsOff(currentFreq: Float, targetFreq: Float): Float {
         if (!currentFreq.isFinite() || !targetFreq.isFinite() || currentFreq <= 0f || targetFreq <= 0f) {
             return 0f
@@ -26,6 +32,9 @@ object TunerMath {
         return if (cents.isFinite()) cents else 0f
     }
 
+    /**
+     * 对连续结果进行平滑处理。
+     */
     fun smooth(previous: Float?, next: Float, factor: Float): Float {
         if (previous == null) {
             return next

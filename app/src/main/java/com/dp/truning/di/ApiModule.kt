@@ -16,12 +16,18 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object ApiModule {
 
+    /**
+     * 提供 logging interceptor。
+     */
     @Provides
     @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
     }
 
+    /**
+     * 提供 ok http client。
+     */
     @Provides
     @Singleton
     fun provideOkHttpClient(logging: HttpLoggingInterceptor): OkHttpClient {
@@ -31,6 +37,9 @@ object ApiModule {
             .build()
     }
 
+    /**
+     * 提供 retrofit。
+     */
     @Provides
     @Singleton
     fun provideRetrofit(client: OkHttpClient): Retrofit {

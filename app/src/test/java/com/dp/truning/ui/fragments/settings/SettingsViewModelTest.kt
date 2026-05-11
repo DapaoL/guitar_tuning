@@ -16,6 +16,9 @@ class SettingsViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    /**
+     * 验证 load settings populates ui state from saved settings。
+     */
     @Test
     fun loadSettings_populatesUiStateFromSavedSettings() {
         val fakePreferences = FakePreferences(
@@ -35,6 +38,9 @@ class SettingsViewModelTest {
         assertEquals(TunerDisplayMode.NUMERIC, viewModel.selectedDisplayMode.value)
     }
 
+    /**
+     * 验证 save reference A 4 invalid value rejected and persisted value unchanged。
+     */
     @Test
     fun saveReferenceA4_invalidValue_rejectedAndPersistedValueUnchanged() {
         val fakePreferences = FakePreferences(
@@ -51,6 +57,9 @@ class SettingsViewModelTest {
         assertEquals(null, fakePreferences.lastSavedReferenceA4)
     }
 
+    /**
+     * 验证 save reference A 4 valid value persists and clears error。
+     */
     @Test
     fun saveReferenceA4_validValue_persistsAndClearsError() {
         val fakePreferences = FakePreferences(
@@ -68,6 +77,9 @@ class SettingsViewModelTest {
         assertFalse(viewModel.referenceA4HasError.value ?: true)
     }
 
+    /**
+     * 验证 select sensitivity persists and updates state。
+     */
     @Test
     fun selectSensitivity_persistsAndUpdatesState() {
         val fakePreferences = FakePreferences(
@@ -82,6 +94,9 @@ class SettingsViewModelTest {
         assertEquals(TuningSensitivity.HIGH, viewModel.selectedSensitivity.value)
     }
 
+    /**
+     * 验证 select display mode persists and updates state。
+     */
     @Test
     fun selectDisplayMode_persistsAndUpdatesState() {
         val fakePreferences = FakePreferences(
@@ -104,30 +119,60 @@ class SettingsViewModelTest {
         var lastSavedSensitivity: TuningSensitivity? = null
         var lastSavedDisplayMode: TunerDisplayMode? = null
 
+        /**
+         * 获取 access token。
+         */
         override fun getAccessToken(): String? = null
 
+        /**
+         * 设置 access token。
+         */
         override fun setAccessToken(token: String) = Unit
 
+        /**
+         * 删除 access token。
+         */
         override fun deleteAccessToken() = Unit
 
+        /**
+         * 获取 refresh token。
+         */
         override fun getRefreshToken(): String? = null
 
+        /**
+         * 设置 refresh token。
+         */
         override fun setRefreshToken(token: String) = Unit
 
+        /**
+         * 删除 refresh token。
+         */
         override fun deleteRefreshToken() = Unit
 
+        /**
+         * 获取 tuner settings。
+         */
         override fun getTunerSettings(): TunerSettings = currentSettings
 
+        /**
+         * 设置 tuner reference A 4。
+         */
         override fun setTunerReferenceA4(referenceA4Hz: Int) {
             lastSavedReferenceA4 = referenceA4Hz
             currentSettings = currentSettings.copy(referenceA4Hz = referenceA4Hz)
         }
 
+        /**
+         * 设置 tuner sensitivity。
+         */
         override fun setTunerSensitivity(sensitivity: TuningSensitivity) {
             lastSavedSensitivity = sensitivity
             currentSettings = currentSettings.copy(sensitivity = sensitivity)
         }
 
+        /**
+         * 设置 tuner display mode。
+         */
         override fun setTunerDisplayMode(displayMode: TunerDisplayMode) {
             lastSavedDisplayMode = displayMode
             currentSettings = currentSettings.copy(displayMode = displayMode)

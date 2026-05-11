@@ -13,6 +13,9 @@ abstract class BaseActivity<VB : ViewBinding>(private val bindingFactory: (Layou
     protected lateinit var binding: VB
     protected lateinit var sharedPref: SharedPreferences
 
+    /**
+     * 在组件创建时完成初始化。
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.i(TAG, "onCreate()")

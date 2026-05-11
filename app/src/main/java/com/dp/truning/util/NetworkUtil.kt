@@ -7,6 +7,9 @@ import android.net.NetworkRequest
 import android.os.Build
 
 object NetworkUtil {
+    /**
+     * 判断是否已具备 internet connection。
+     */
     fun hasInternetConnection(context: Context): Boolean {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
             val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -32,10 +35,16 @@ object NetworkUtil {
         var isConnected = false
             private set
 
+        /**
+         * 在网络可用时更新连接状态。
+         */
         override fun onAvailable(network: Network) {
             isConnected = true
         }
 
+        /**
+         * 在网络断开时更新连接状态。
+         */
         override fun onLost(network: Network) {
             isConnected = false
         }

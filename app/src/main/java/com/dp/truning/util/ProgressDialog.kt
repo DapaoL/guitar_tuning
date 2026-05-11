@@ -18,6 +18,9 @@ class ProgressDialog(var activity: Activity) {
     private var alertDialog = builder.create()
     private var process: Boolean = false
 
+    /**
+     * 创建并显示加载中的进度对话框。
+     */
     fun createProgressDialog() {
         process = false
         val view: View = LayoutInflater.from(activity).inflate(R.layout.progress_dialog, activity.findViewById<View>(R.id.layoutDialogContainer) as RelativeLayout?)
@@ -40,6 +43,9 @@ class ProgressDialog(var activity: Activity) {
         showDialog()
     }
 
+    /**
+     * 关闭进度对话框。
+     */
     fun cancelDialog(delayClose: Boolean = false) {
         if (delayClose) {
             Handler().postDelayed({
@@ -57,6 +63,9 @@ class ProgressDialog(var activity: Activity) {
         }
     }
 
+    /**
+     * 显示进度对话框。
+     */
     private fun showDialog() {
         if (!process) {
             alertDialog.setCancelable(false)

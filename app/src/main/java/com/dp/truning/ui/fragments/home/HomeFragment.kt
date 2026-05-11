@@ -50,6 +50,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private val pointerRange = 50f
     private var smoothedPitch: Float? = null
 
+    /**
+     * 在视图创建完成后绑定界面状态与交互。
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.page = this
@@ -58,6 +61,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         initView()
     }
 
+    /**
+     * 在界面恢复可见时刷新当前状态。
+     */
     override fun onResume() {
         super.onResume()
         viewModel.refreshTunerSettings()
@@ -67,12 +73,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
+    /**
+     * 在界面进入暂停前停止正在进行的工作。
+     */
     override fun onPause() {
         stopTuner()
         tonePreviewPlayer.stop()
         super.onPause()
     }
 
+    /**
+     * 处理 init view 相关逻辑。
+     */
     private fun initView() {
         binding.tvTip.text = "准备调音"
         binding.tvTip.setTextColor(Color.BLACK)
@@ -91,11 +103,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         updateAutoDetectSummary(viewModel.autoDetectEnabled.value == true)
     }
 
+    /**
+     * 选择 string。
+     */
     fun selectString(view: View) {
         val selectedIndex = view.tag?.toString()?.toIntOrNull() ?: return
         updateSelectedString(selectedIndex)
     }
 
+    /**
+     * 绑定 string knobs。
+     */
     private fun bindStringKnobs() {
         getStringKnobs().forEachIndexed { index, knob ->
             knob.isClickable = true
@@ -110,6 +128,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
+    /**
+     * 更新 selected string。
+     */
     private fun updateSelectedString(selectedIndex: Int) {
         val selectedString = GuitarTone.standardStringAt(selectedIndex, currentSettings().referenceA4Hz) ?: return
         viewModel.selectedIndex.value = selectedString.index
@@ -118,12 +139,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         updateKnobSelection(selectedString.index)
     }
 
+    /**
+     * 更新 knob selection。
+     */
     private fun updateKnobSelection(selectedIndex: Int) {
         getStringKnobs().forEachIndexed { index, knob ->
             knob.isSelected = index == selectedIndex
         }
     }
 
+    /**
+     * 更新 knob interactivity。
+     */
     private fun updateKnobInteractivity(autoDetectEnabled: Boolean) {
         val alpha = if (autoDetectEnabled) 0.55f else 1f
         getStringKnobs().forEach { knob ->
@@ -132,6 +159,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
+    /**
+     * 更新 auto detect summary。
+     */
     private fun updateAutoDetectSummary(autoDetectEnabled: Boolean) {
         binding.tvAutoDetectSummary.text =
             if (autoDetectEnabled) {
@@ -141,16 +171,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             }
     }
 
+    /**
+     * 获取 selected string。
+     */
     private fun getSelectedString(): GuitarTone.GuitarString {
         val referenceA4 = currentSettings().referenceA4Hz
         return GuitarTone.standardStringAt(viewModel.selectedIndex.value ?: 4, referenceA4)
             ?: GuitarTone.standardStrings(referenceA4)[4]
     }
 
+    /**
+     * 获取当前 settings。
+     */
     private fun currentSettings(): TunerSettings {
         return viewModel.tunerSettings.value ?: TunerSettings()
     }
 
+    /**
+     * 应用 tuner settings。
+     */
     private fun applyTunerSettings() {
         val settings = currentSettings()
         centRange = when (settings.sensitivity) {
@@ -163,6 +202,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         updateSelectedString(viewModel.selectedIndex.value ?: 4)
     }
 
+    /**
+     * 更新 display mode visibility。
+     */
     private fun updateDisplayModeVisibility(displayMode: TunerDisplayMode) {
         val pointerVisible = displayMode != TunerDisplayMode.NUMERIC
         binding.tvPitchStatus.visibility = if (pointerVisible) View.VISIBLE else View.GONE
@@ -174,6 +216,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             if (displayMode == TunerDisplayMode.GAUGE) View.VISIBLE else View.GONE
     }
 
+    /**
+     * 获取 string knobs。
+     */
     private fun getStringKnobs(): List<TextView> {
         return listOf(
             binding.knob1,
@@ -185,10 +230,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         )
     }
 
+    /**
+     * 获取 mic。
+     */
     fun getMic(view: View) {
         requestMicrophonePermission(showGrantedToast = true, startTunerAfterGrant = false)
     }
 
+    /**
+     * 启动 tuner。
+     */
     fun startTuner(view: View) {
         if (MicrophonePermissionHelper.hasPermission(this)) {
             startTunerInternal()
@@ -197,6 +248,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         requestMicrophonePermission(showGrantedToast = false, startTunerAfterGrant = true)
     }
 
+    /**
+     * 处理 tuner entry。
+     */
     private fun handleTunerEntry() {
         if (!isAdded) {
             return
@@ -212,11 +266,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
+    /**
+     * 判断是否需要 skip auto entry。
+     */
     private fun shouldSkipAutoEntry(): Boolean {
         return ActivityManager.isRunningInUserTestHarness() ||
             requireActivity().intent.getBooleanExtra(MainActivity.EXTRA_SKIP_HOME_AUTO_ENTRY, false)
     }
 
+    /**
+     * 显示 microphone permission guide。
+     */
     private fun showMicrophonePermissionGuide() {
         markMicPermissionGuideShown()
         AlertDialog.Builder(requireContext())
@@ -229,6 +289,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             .show()
     }
 
+    /**
+     * 请求 microphone permission。
+     */
     private fun requestMicrophonePermission(
         showGrantedToast: Boolean,
         startTunerAfterGrant: Boolean
@@ -251,12 +314,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         )
     }
 
+    /**
+     * 判断是否已具备 shown mic permission guide。
+     */
     private fun hasShownMicPermissionGuide(): Boolean {
         return requireContext()
             .getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
             .getBoolean(KEY_HAS_SHOWN_MIC_PERMISSION_GUIDE, false)
     }
 
+    /**
+     * 标记 mic permission guide shown。
+     */
     private fun markMicPermissionGuideShown() {
         requireContext()
             .getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
@@ -265,6 +334,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             .apply()
     }
 
+    /**
+     * 启动 tuner internal。
+     */
     private fun startTunerInternal() {
         stopTuner()
         smoothedPitch = null
@@ -324,6 +396,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         binding.tvTip.setTextColor(Color.BLACK)
     }
 
+    /**
+     * 处理 freq to note 相关逻辑。
+     */
     private fun freqToNote(freq: Float): String {
         if (freq <= 0f) {
             return "--"
@@ -340,6 +415,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         return "$note$octave"
     }
 
+    /**
+     * 处理 calculate cent diff 相关逻辑。
+     */
     private fun calculateCentDiff(currentFreq: Float, targetFreq: Float): Float {
         if (currentFreq <= 0f || targetFreq <= 0f) {
             return 0f
@@ -347,6 +425,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         return 1200f * (ln(currentFreq / targetFreq) / ln(2.0f))
     }
 
+    /**
+     * 更新 tuner UI。
+     */
     private fun updateTunerUI(currentFreq: Float) {
         val settings = currentSettings()
         if (viewModel.autoDetectEnabled.value == true) {
@@ -398,6 +479,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         binding.tvTip.setTextColor(statusColor)
     }
 
+    /**
+     * 更新 pitch pointer。
+     */
     private fun updatePitchPointer(centDiff: Float) {
         val pointer = binding.tvPitchPointer
         val container = binding.pitchPointerContainer
@@ -411,6 +495,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         pointer.translationX = normalizedOffset * maxOffset
     }
 
+    /**
+     * 停止 tuner。
+     */
     private fun stopTuner() {
         audioDispatcher?.stop()
         audioDispatcher = null
@@ -419,10 +506,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         smoothedPitch = null
     }
 
+    /**
+     * 播放 selected string tone。
+     */
     private fun playSelectedStringTone() {
         tonePreviewPlayer.play(getSelectedString().frequency)
     }
 
+    /**
+     * 在视图销毁时释放与界面相关的资源。
+     */
     override fun onDestroyView() {
         stopTuner()
         tonePreviewPlayer.stop()
@@ -438,6 +531,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         private var playThread: Thread? = null
         private var audioTrack: AudioTrack? = null
 
+        /**
+         * 处理 play 相关逻辑。
+         */
         fun play(frequency: Float) {
             if (frequency <= 0f) {
                 return
@@ -517,6 +613,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             thread.start()
         }
 
+        /**
+         * 处理 stop 相关逻辑。
+         */
         fun stop() {
             val thread: Thread?
             val track: AudioTrack?
@@ -530,6 +629,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             releaseTrack(track)
         }
 
+        /**
+         * 处理 release track 相关逻辑。
+         */
         private fun releaseTrack(track: AudioTrack?) {
             if (track == null) {
                 return

@@ -13,6 +13,9 @@ class SettingsPlaceholderFragment : Fragment(R.layout.fragment_settings_placehol
     private var _binding: FragmentSettingsPlaceholderBinding? = null
     private val binding get() = _binding!!
 
+    /**
+     * 在视图创建完成后绑定界面状态与交互。
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentSettingsPlaceholderBinding.bind(view)
@@ -23,6 +26,9 @@ class SettingsPlaceholderFragment : Fragment(R.layout.fragment_settings_placehol
         }
     }
 
+    /**
+     * 在视图销毁时释放与界面相关的资源。
+     */
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
@@ -31,6 +37,9 @@ class SettingsPlaceholderFragment : Fragment(R.layout.fragment_settings_placehol
     companion object {
         private const val ARG_TITLE_RES = "title_res"
 
+        /**
+         * 处理 new instance 相关逻辑。
+         */
         fun newInstance(@StringRes titleRes: Int): SettingsPlaceholderFragment {
             return SettingsPlaceholderFragment().apply {
                 arguments = bundleOf(ARG_TITLE_RES to titleRes)

@@ -6,6 +6,9 @@ import android.content.SharedPreferences
 
 abstract class SharedPreferences(context: Context) {
 
+    /**
+     * 获取 pref name。
+     */
     abstract fun getPrefName(): String
 
     protected val preferences: SharedPreferences by lazy {

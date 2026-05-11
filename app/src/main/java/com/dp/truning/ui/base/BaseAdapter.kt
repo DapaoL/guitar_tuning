@@ -18,11 +18,17 @@ abstract class BaseAdapter<VB : ViewBinding, M>(private val bindingFactory: (Lay
         }
     }
 
+    /**
+     * 创建列表项对应的 ViewHolder。
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<VB> {
         val binding = bindingFactory(LayoutInflater.from(parent.context), parent, false)
         return BaseViewHolder(binding)
     }
 
+    /**
+     * 绑定指定位置的数据到 ViewHolder。
+     */
     override fun onBindViewHolder(holder: BaseViewHolder<VB>, position: Int) {
         val device = list[position]
         holder.itemView.setOnClickListener {
@@ -30,6 +36,9 @@ abstract class BaseAdapter<VB : ViewBinding, M>(private val bindingFactory: (Lay
         }
     }
 
+    /**
+     * 返回当前列表的数据数量。
+     */
     override fun getItemCount(): Int {
         return list.size
     }

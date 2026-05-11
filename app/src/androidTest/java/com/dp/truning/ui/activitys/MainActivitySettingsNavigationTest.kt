@@ -22,6 +22,9 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class MainActivitySettingsNavigationTest {
 
+    /**
+     * 验证 settings tab opens home then placeholder then back to home。
+     */
     @Test
     fun settingsTab_opensHome_thenPlaceholder_thenBackToHome() {
         launchMainActivity()
@@ -46,6 +49,9 @@ class MainActivitySettingsNavigationTest {
         onView(withId(R.id.itemAbout)).check(matches(isDisplayed()))
     }
 
+    /**
+     * 启动 main activity。
+     */
     private fun launchMainActivity() {
         val instrumentation = InstrumentationRegistry.getInstrumentation()
         ParcelFileDescriptor.AutoCloseInputStream(
@@ -61,16 +67,28 @@ class MainActivitySettingsNavigationTest {
         instrumentation.waitForIdleSync()
     }
 
+    /**
+     * 选择 bottom nav item。
+     */
     private fun selectBottomNavItem(itemId: Int): ViewAction {
         return object : ViewAction {
+            /**
+             * 获取 constraints。
+             */
             override fun getConstraints(): Matcher<View> {
                 return isAssignableFrom(BottomNavigationView::class.java)
             }
 
+            /**
+             * 获取 description。
+             */
             override fun getDescription(): String {
                 return "select bottom navigation item $itemId"
             }
 
+            /**
+             * 处理 perform 相关逻辑。
+             */
             override fun perform(uiController: UiController, view: View) {
                 val bottomNav = view as BottomNavigationView
                 bottomNav.selectedItemId = itemId

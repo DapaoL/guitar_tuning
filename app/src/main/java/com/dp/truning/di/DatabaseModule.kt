@@ -14,12 +14,18 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
+    /**
+     * 提供 database。
+     */
     @Provides
     @Singleton
     fun provideDatabase(application: Application, callback: AppDatabase.Callback): AppDatabase {
         return Room.databaseBuilder(application, AppDatabase::class.java, "local_database").fallbackToDestructiveMigration().addCallback(callback).build()
     }
 
+    /**
+     * 提供 example dao。
+     */
     @Provides
     fun provideExampleDao(database: AppDatabase): ExampleDao {
         return database.getExampleDao()

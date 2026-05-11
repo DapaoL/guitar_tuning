@@ -14,6 +14,9 @@ import javax.inject.Provider
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
+    /**
+     * 获取 example dao。
+     */
     abstract fun getExampleDao(): ExampleDao
 
     class Callback @Inject constructor(private val database: Provider<AppDatabase>,

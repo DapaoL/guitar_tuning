@@ -27,6 +27,9 @@ abstract class BaseFragment<VB : ViewBinding, VM : ViewModel> : Fragment() {
         Boolean::class.java
     )
 
+    /**
+     * 创建并返回当前 Fragment 的视图层级。
+     */
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

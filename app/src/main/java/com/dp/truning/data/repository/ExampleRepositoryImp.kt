@@ -9,6 +9,9 @@ import javax.inject.Singleton
 
 @Singleton
 class ExampleRepositoryImp @Inject constructor(private val appService: AppService, private val exampleDao: ExampleDao) : ExampleRepository {
+    /**
+     * 处理 test 相关逻辑。
+     */
     override suspend fun test() {
 
 
