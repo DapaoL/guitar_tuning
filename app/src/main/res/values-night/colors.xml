@@ -22,6 +22,7 @@
     <color name="home_tint_blue">#818CF8</color>
     <color name="home_tint_cyan">#22D3EE</color>
     <color name="home_tint_gold">#FBBF24</color>
+    <color name="home_text_muted">#94A3B8</color>
     <color name="home_wood_dark">#5B3417</color>
     <color name="home_wood_light">#B7791F</color>
 

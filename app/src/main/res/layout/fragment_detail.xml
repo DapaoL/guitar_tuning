@@ -72,7 +72,7 @@
                         android:layout_marginTop="8dp"
                         android:fontFamily="@font/poppins_medium"
                         android:text="4/4 拍 · 30 - 300 BPM"
-                        android:textColor="#B7C7DD"
+                        android:textColor="@color/home_text_muted"
                         android:textSize="14sp" />
 
                     <FrameLayout

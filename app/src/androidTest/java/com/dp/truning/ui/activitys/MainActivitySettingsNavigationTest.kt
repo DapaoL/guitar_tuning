@@ -41,8 +41,21 @@ class MainActivitySettingsNavigationTest {
         onView(withId(R.id.settingsHomeTitle)).check(matches(withText(R.string.settings_root_title)))
 
         onView(withId(R.id.itemAbout)).perform(click())
-        onView(withId(R.id.titleView)).check(matches(withText(R.string.settings_item_about)))
-        onView(withId(R.id.messageView)).check(matches(withText(R.string.settings_placeholder_message)))
+        onView(withId(R.id.aboutTitle)).check(matches(withText(R.string.about_settings_title)))
+        onView(withId(R.id.itemPrivacyPolicy)).check(matches(isDisplayed()))
+        onView(withId(R.id.itemUserAgreement)).check(matches(isDisplayed()))
+        onView(withId(R.id.itemPermissions)).check(matches(isDisplayed()))
+        onView(withId(R.id.versionValue)).check(matches(withText("V1.0.0")))
+
+        onView(withId(R.id.itemPermissions)).perform(click())
+        onView(withId(R.id.permissionsTitle)).check(matches(withText(R.string.about_settings_permissions_title)))
+        onView(withId(R.id.permissionRecordAudioTitle)).check(matches(isDisplayed()))
+        onView(withId(R.id.permissionVibrateTitle)).check(matches(isDisplayed()))
+        onView(withId(R.id.permissionNetworkTitle)).check(matches(isDisplayed()))
+        onView(withId(R.id.permissionNetworkStateTitle)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.buttonBack)).perform(click())
+        onView(withId(R.id.aboutTitle)).check(matches(withText(R.string.about_settings_title)))
 
         onView(withId(R.id.buttonBack)).perform(click())
         onView(withId(R.id.settingsHomeTitle)).check(matches(withText(R.string.settings_root_title)))

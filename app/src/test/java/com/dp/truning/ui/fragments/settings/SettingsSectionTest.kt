@@ -29,12 +29,13 @@ class SettingsSectionTest {
      * 验证调音和节拍器分区不是占位页。
      */
     @Test
-    fun tunerAndMetronomeSections_areNotPlaceholder() {
+    fun implementedSections_areNotPlaceholder() {
         assertFalse(SettingsSection.TUNER.usesPlaceholder)
         assertFalse(SettingsSection.METRONOME.usesPlaceholder)
+        assertFalse(SettingsSection.ABOUT.usesPlaceholder)
+        assertFalse(SettingsSection.PERMISSIONS.usesPlaceholder)
         assertTrue(SettingsSection.GENERAL.usesPlaceholder)
         assertTrue(SettingsSection.SUPPORT.usesPlaceholder)
-        assertTrue(SettingsSection.ABOUT.usesPlaceholder)
     }
 
     /**

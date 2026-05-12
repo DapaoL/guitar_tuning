@@ -85,8 +85,14 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
      * 此时 Hilt 注入尚未完成，直接用原始 SharedPreferences 读取。
      */
     private fun applyStoredThemeEarly() {
-        val prefs = applicationContext.getSharedPreferences("WiseriaPrefs", android.content.Context.MODE_PRIVATE)
-        val raw = prefs.getString("generalThemeMode", null)
+        val prefs = applicationContext.getSharedPreferences(
+            com.dp.truning.common.data.preferences.PreferencesConstants.KEYSTORE_NAME,
+            android.content.Context.MODE_PRIVATE
+        )
+        val raw = prefs.getString(
+            com.dp.truning.common.data.preferences.PreferencesConstants.KEY_GENERAL_THEME_MODE,
+            null
+        )
         val themeMode = com.dp.truning.domain.model.AppThemeMode.fromStorage(raw)
         GeneralSettingsViewModel.applyTheme(themeMode)
     }

@@ -11,7 +11,8 @@ enum class SettingsSection(
     METRONOME(R.string.settings_item_metronome, false),
     GENERAL(R.string.settings_item_general, true),
     SUPPORT(R.string.settings_item_support, true),
-    ABOUT(R.string.settings_item_about, true);
+    ABOUT(R.string.settings_item_about, false),
+    PERMISSIONS(R.string.about_settings_permissions_title, false);
 
     companion object {
         /**

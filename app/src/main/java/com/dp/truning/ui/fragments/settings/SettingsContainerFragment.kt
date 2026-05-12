@@ -41,7 +41,9 @@ class SettingsContainerFragment :
             SettingsSection.TUNER -> SettingsFragment()
             SettingsSection.METRONOME -> MetronomeSettingsFragment()
             SettingsSection.GENERAL -> GeneralSettingsFragment()
-            else -> SettingsPlaceholderFragment.newInstance(section.titleRes)
+            SettingsSection.SUPPORT -> SupportFeedbackFragment()
+            SettingsSection.ABOUT -> AboutSettingsFragment()
+            SettingsSection.PERMISSIONS -> PermissionsFragment()
         }
 
         childFragmentManager.beginTransaction()
