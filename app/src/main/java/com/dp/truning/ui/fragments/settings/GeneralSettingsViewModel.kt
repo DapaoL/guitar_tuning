@@ -10,10 +10,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GeneralSettingsViewModel @Inject constructor(
-    private val preferences: Preferences
+    private val preferences: Preferences,
+    private val systemThemeStateProvider: SystemThemeStateProvider
 ) : ViewModel() {
 
-    val selectedThemeMode = MutableLiveData(AppThemeMode.FOLLOW_SYSTEM)
+    val selectedThemeMode = MutableLiveData(AppThemeMode.LIGHT)
     val keepScreenOnEnabled = MutableLiveData(false)
     val volumeBoostEnabled = MutableLiveData(false)
 
@@ -24,10 +25,22 @@ class GeneralSettingsViewModel @Inject constructor(
         volumeBoostEnabled.value = settings.volumeBoostEnabled
     }
 
-    fun selectThemeMode(themeMode: AppThemeMode) {
+    fun selectThemeMode(themeMode: AppThemeMode): Boolean {
+        val previousThemeMode = selectedThemeMode.value ?: preferences.getGeneralSettings().themeMode
+        val shouldRecreate = shouldApplyThemeChange(
+            previousThemeMode,
+            themeMode,
+            systemThemeStateProvider.isSystemDarkTheme()
+        )
+
+        if (previousThemeMode == themeMode) {
+            return false
+        }
+
         preferences.setGeneralThemeMode(themeMode)
         selectedThemeMode.value = themeMode
         applyTheme(themeMode)
+        return shouldRecreate
     }
 
     fun setKeepScreenOnEnabled(enabled: Boolean) {
@@ -41,11 +54,33 @@ class GeneralSettingsViewModel @Inject constructor(
     }
 
     companion object {
+        fun shouldApplyThemeChange(
+            previousThemeMode: AppThemeMode,
+            targetThemeMode: AppThemeMode,
+            systemIsDark: Boolean
+        ): Boolean {
+            if (previousThemeMode == targetThemeMode) {
+                return false
+            }
+
+            return resolvesToDarkTheme(previousThemeMode, systemIsDark) !=
+                resolvesToDarkTheme(targetThemeMode, systemIsDark)
+        }
+
+        private fun resolvesToDarkTheme(
+            themeMode: AppThemeMode,
+            systemIsDark: Boolean
+        ): Boolean {
+            return when (themeMode) {
+                AppThemeMode.LIGHT -> false
+                AppThemeMode.DARK -> true
+            }
+        }
+
         fun applyTheme(themeMode: AppThemeMode) {
             val mode = when (themeMode) {
                 AppThemeMode.LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
                 AppThemeMode.DARK -> AppCompatDelegate.MODE_NIGHT_YES
-                AppThemeMode.FOLLOW_SYSTEM -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
             }
             AppCompatDelegate.setDefaultNightMode(mode)
         }

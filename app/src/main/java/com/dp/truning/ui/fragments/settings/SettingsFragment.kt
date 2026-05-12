@@ -19,8 +19,6 @@ class SettingsFragment : BaseVmFragment<FragmentSettingsBinding, SettingsViewMod
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.vm = viewModel
-        binding.lifecycleOwner = viewLifecycleOwner
         initView()
         bindObservers()
     }

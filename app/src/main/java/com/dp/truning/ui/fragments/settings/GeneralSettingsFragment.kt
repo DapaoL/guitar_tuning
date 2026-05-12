@@ -13,13 +13,10 @@ import dagger.hilt.android.AndroidEntryPoint
 class GeneralSettingsFragment :
     BaseVmFragment<FragmentGeneralSettingsBinding, GeneralSettingsViewModel>() {
 
-    private var isUpdatingSelectionFromState = false
     private var isUpdatingToggleFromState = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.vm = viewModel
-        binding.lifecycleOwner = viewLifecycleOwner
         initView()
         bindObservers()
     }
@@ -34,16 +31,8 @@ class GeneralSettingsFragment :
             (parentFragment as? SettingsNavigationHost)?.goBackFromSettingsChild()
         }
 
-        binding.groupThemeMode.setOnCheckedChangeListener { _, checkedId ->
-            if (isUpdatingSelectionFromState) {
-                return@setOnCheckedChangeListener
-            }
-            when (checkedId) {
-                R.id.optionThemeLight -> viewModel.selectThemeMode(AppThemeMode.LIGHT)
-                R.id.optionThemeDark -> viewModel.selectThemeMode(AppThemeMode.DARK)
-                R.id.optionThemeFollowSystem -> viewModel.selectThemeMode(AppThemeMode.FOLLOW_SYSTEM)
-            }
-        }
+        binding.cardThemeLight.setOnClickListener { handleThemeSelection(AppThemeMode.LIGHT) }
+        binding.cardThemeDark.setOnClickListener { handleThemeSelection(AppThemeMode.DARK) }
 
         bindToggle(binding.switchKeepScreenOn) { viewModel.setKeepScreenOnEnabled(it) }
         bindToggle(binding.switchVolumeBoost) { viewModel.setVolumeBoostEnabled(it) }
@@ -51,16 +40,7 @@ class GeneralSettingsFragment :
 
     private fun bindObservers() {
         viewModel.selectedThemeMode.observe(viewLifecycleOwner) { themeMode ->
-            val targetId = when (themeMode) {
-                AppThemeMode.LIGHT -> R.id.optionThemeLight
-                AppThemeMode.DARK -> R.id.optionThemeDark
-                AppThemeMode.FOLLOW_SYSTEM -> R.id.optionThemeFollowSystem
-            }
-            if (binding.groupThemeMode.checkedRadioButtonId != targetId) {
-                isUpdatingSelectionFromState = true
-                binding.groupThemeMode.check(targetId)
-                isUpdatingSelectionFromState = false
-            }
+            renderThemeSelection(themeMode)
         }
 
         viewModel.keepScreenOnEnabled.observe(viewLifecycleOwner) { enabled ->
@@ -88,5 +68,20 @@ class GeneralSettingsFragment :
         isUpdatingToggleFromState = true
         toggle.isChecked = enabled
         isUpdatingToggleFromState = false
+    }
+
+    private fun renderThemeSelection(themeMode: AppThemeMode) {
+        val lightSelected = themeMode == AppThemeMode.LIGHT
+        val darkSelected = themeMode == AppThemeMode.DARK
+        binding.cardThemeLight.isSelected = lightSelected
+        binding.cardThemeDark.isSelected = darkSelected
+        binding.optionThemeLight.isChecked = lightSelected
+        binding.optionThemeDark.isChecked = darkSelected
+    }
+
+    private fun handleThemeSelection(themeMode: AppThemeMode) {
+        if (viewModel.selectThemeMode(themeMode)) {
+            requireActivity().recreate()
+        }
     }
 }

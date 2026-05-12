@@ -163,7 +163,6 @@ class SettingsHomeFragment : BaseVmFragment<FragmentSettingsHomeBinding, Setting
         val labelRes = when (themeMode) {
             AppThemeMode.LIGHT -> R.string.general_settings_theme_light
             AppThemeMode.DARK -> R.string.general_settings_theme_dark
-            AppThemeMode.FOLLOW_SYSTEM -> R.string.general_settings_theme_follow_system
         }
         return getString(labelRes)
     }

@@ -115,6 +115,8 @@
     <string name="general_settings_theme_summary">选择应用的显示主题，切换后立即生效。</string>
     <string name="general_settings_theme_light">浅色</string>
     <string name="general_settings_theme_dark">深色</string>
+    <string name="general_settings_theme_light_summary">清爽高对比，适合白天调音。</string>
+    <string name="general_settings_theme_dark_summary">深色舞台感，适合夜间练琴。</string>
     <string name="general_settings_theme_follow_system">跟随系统</string>
     <string name="general_settings_keep_screen_on_title">保持屏幕常亮</string>
     <string name="general_settings_keep_screen_on_summary">在调音器和节拍器页面保持屏幕常亮，设置页不受影响。</string>

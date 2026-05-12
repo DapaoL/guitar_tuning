@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <data>
-
-        <variable
-            name="vm"
-            type="com.dp.truning.ui.fragments.settings.GeneralSettingsViewModel" />
-    </data>
-
-    <FrameLayout
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -31,7 +22,7 @@
                 android:layout_marginTop="50dp"
                 android:paddingBottom="110dp">
 
-                <!-- 主题设置 -->
+                <!-- 涓婚璁剧疆 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -56,39 +47,168 @@
                         android:textColor="@color/settings_text_secondary"
                         android:textSize="13sp" />
 
-                    <RadioGroup
-                        android:id="@+id/groupThemeMode"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp">
+                        android:layout_marginTop="14dp"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
 
-                        <RadioButton
-                            android:id="@+id/optionThemeLight"
-                            android:layout_width="match_parent"
+                        <LinearLayout
+                            android:id="@+id/cardThemeLight"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:buttonTint="@color/settings_accent_gold"
-                            android:text="@string/general_settings_theme_light"
-                            android:textColor="@color/settings_text_primary" />
+                            android:layout_marginEnd="7dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_settings_theme_card"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:minHeight="150dp"
+                            android:orientation="vertical"
+                            android:padding="12dp">
 
-                        <RadioButton
-                            android:id="@+id/optionThemeDark"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:buttonTint="@color/settings_accent_gold"
-                            android:text="@string/general_settings_theme_dark"
-                            android:textColor="@color/settings_text_primary" />
+                            <FrameLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="72dp"
+                                android:background="@drawable/bg_theme_preview_light"
+                                android:padding="10dp">
 
-                        <RadioButton
-                            android:id="@+id/optionThemeFollowSystem"
-                            android:layout_width="match_parent"
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:gravity="bottom"
+                                    android:orientation="vertical">
+
+                                    <View
+                                        android:layout_width="40dp"
+                                        android:layout_height="7dp"
+                                        android:background="@drawable/bg_settings_success_chip" />
+
+                                    <View
+                                        android:layout_width="64dp"
+                                        android:layout_height="7dp"
+                                        android:layout_marginTop="7dp"
+                                        android:background="@drawable/bg_settings_badge" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="end|top"
+                                    android:orientation="horizontal">
+
+                                    <View
+                                        android:layout_width="9dp"
+                                        android:layout_height="9dp"
+                                        android:background="@drawable/bg_theme_preview_dot_primary" />
+
+                                    <View
+                                        android:layout_width="9dp"
+                                        android:layout_height="9dp"
+                                        android:layout_marginStart="5dp"
+                                        android:background="@drawable/bg_theme_preview_dot_success" />
+                                </LinearLayout>
+                            </FrameLayout>
+
+                            <RadioButton
+                                android:id="@+id/optionThemeLight"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:buttonTint="@color/settings_accent_gold"
+                                android:clickable="false"
+                                android:focusable="false"
+                                android:text="@string/general_settings_theme_light"
+                                android:textColor="@color/settings_text_primary"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/general_settings_theme_light_summary"
+                                android:textColor="@color/settings_text_secondary"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/cardThemeDark"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:buttonTint="@color/settings_accent_gold"
-                            android:text="@string/general_settings_theme_follow_system"
-                            android:textColor="@color/settings_text_primary" />
-                    </RadioGroup>
+                            android:layout_marginStart="7dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_settings_theme_card"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:minHeight="150dp"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
+                            <FrameLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="72dp"
+                                android:background="@drawable/bg_theme_preview_dark"
+                                android:padding="10dp">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:gravity="bottom"
+                                    android:orientation="vertical">
+
+                                    <View
+                                        android:layout_width="40dp"
+                                        android:layout_height="7dp"
+                                        android:background="@drawable/bg_theme_preview_dot_success" />
+
+                                    <View
+                                        android:layout_width="64dp"
+                                        android:layout_height="7dp"
+                                        android:layout_marginTop="7dp"
+                                        android:background="@drawable/bg_theme_preview_dot_gold" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="end|top"
+                                    android:orientation="horizontal">
+
+                                    <View
+                                        android:layout_width="9dp"
+                                        android:layout_height="9dp"
+                                        android:background="@drawable/bg_theme_preview_dot_primary" />
+
+                                    <View
+                                        android:layout_width="9dp"
+                                        android:layout_height="9dp"
+                                        android:layout_marginStart="5dp"
+                                        android:background="@drawable/bg_theme_preview_dot_success" />
+                                </LinearLayout>
+                            </FrameLayout>
+
+                            <RadioButton
+                                android:id="@+id/optionThemeDark"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:buttonTint="@color/settings_accent_gold"
+                                android:clickable="false"
+                                android:focusable="false"
+                                android:text="@string/general_settings_theme_dark"
+                                android:textColor="@color/settings_text_primary"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/general_settings_theme_dark_summary"
+                                android:textColor="@color/settings_text_secondary"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
 
-                <!-- 屏幕设置 -->
+                <!-- 灞忓箷璁剧疆 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -128,7 +248,7 @@
                         android:layout_marginStart="16dp" />
                 </LinearLayout>
 
-                <!-- 音频设置 -->
+                <!-- 闊抽璁剧疆 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -223,4 +343,3 @@
 
     </FrameLayout>
 
-</layout>

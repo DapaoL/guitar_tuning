@@ -29,7 +29,7 @@ class GeneralSettingsViewModelTest {
                 volumeBoostEnabled = false
             )
         )
-        val viewModel = GeneralSettingsViewModel(fakePreferences)
+        val viewModel = GeneralSettingsViewModel(fakePreferences, FakeSystemThemeStateProvider())
 
         viewModel.loadSettings()
 
@@ -41,18 +41,19 @@ class GeneralSettingsViewModelTest {
     @Test
     fun selectThemeMode_persistsAndUpdatesState() {
         val fakePreferences = FakePreferences()
-        val viewModel = GeneralSettingsViewModel(fakePreferences)
+        val viewModel = GeneralSettingsViewModel(fakePreferences, FakeSystemThemeStateProvider())
 
-        viewModel.selectThemeMode(AppThemeMode.LIGHT)
+        val shouldRecreate = viewModel.selectThemeMode(AppThemeMode.LIGHT)
 
         assertEquals(AppThemeMode.LIGHT, fakePreferences.currentGeneralSettings.themeMode)
         assertEquals(AppThemeMode.LIGHT, viewModel.selectedThemeMode.value)
+        assertFalse(shouldRecreate)
     }
 
     @Test
     fun setKeepScreenOnEnabled_persistsAndUpdatesState() {
         val fakePreferences = FakePreferences()
-        val viewModel = GeneralSettingsViewModel(fakePreferences)
+        val viewModel = GeneralSettingsViewModel(fakePreferences, FakeSystemThemeStateProvider())
 
         viewModel.setKeepScreenOnEnabled(true)
 
@@ -63,7 +64,7 @@ class GeneralSettingsViewModelTest {
     @Test
     fun setVolumeBoostEnabled_persistsAndUpdatesState() {
         val fakePreferences = FakePreferences()
-        val viewModel = GeneralSettingsViewModel(fakePreferences)
+        val viewModel = GeneralSettingsViewModel(fakePreferences, FakeSystemThemeStateProvider())
 
         viewModel.setVolumeBoostEnabled(true)
 
@@ -75,26 +76,48 @@ class GeneralSettingsViewModelTest {
     fun defaultSettings_hasCorrectDefaults() {
         val settings = GeneralSettings()
 
-        assertEquals(AppThemeMode.FOLLOW_SYSTEM, settings.themeMode)
+        assertEquals(AppThemeMode.LIGHT, settings.themeMode)
         assertFalse(settings.keepScreenOnEnabled)
         assertFalse(settings.volumeBoostEnabled)
     }
 
     @Test
     fun appThemeMode_fromStorage_invalidValueFallsBackToFollowSystem() {
-        assertEquals(AppThemeMode.FOLLOW_SYSTEM, AppThemeMode.fromStorage(null))
-        assertEquals(AppThemeMode.FOLLOW_SYSTEM, AppThemeMode.fromStorage(""))
-        assertEquals(AppThemeMode.FOLLOW_SYSTEM, AppThemeMode.fromStorage("INVALID"))
-        assertEquals(AppThemeMode.FOLLOW_SYSTEM, AppThemeMode.fromStorage("unknown"))
+        assertEquals(AppThemeMode.LIGHT, AppThemeMode.fromStorage(null))
+        assertEquals(AppThemeMode.LIGHT, AppThemeMode.fromStorage(""))
+        assertEquals(AppThemeMode.LIGHT, AppThemeMode.fromStorage("INVALID"))
+        assertEquals(AppThemeMode.LIGHT, AppThemeMode.fromStorage("unknown"))
     }
 
     @Test
     fun appThemeMode_fromStorage_validValuesParsedCorrectly() {
         assertEquals(AppThemeMode.LIGHT, AppThemeMode.fromStorage("LIGHT"))
         assertEquals(AppThemeMode.DARK, AppThemeMode.fromStorage("DARK"))
-        assertEquals(AppThemeMode.FOLLOW_SYSTEM, AppThemeMode.fromStorage("FOLLOW_SYSTEM"))
+        assertEquals(AppThemeMode.LIGHT, AppThemeMode.fromStorage("FOLLOW_SYSTEM"))
         assertEquals(AppThemeMode.LIGHT, AppThemeMode.fromStorage("light"))
         assertEquals(AppThemeMode.DARK, AppThemeMode.fromStorage("dark"))
+    }
+
+    @Test
+    fun shouldApplyThemeChange_returnsFalseWhenEffectiveThemeStaysLight() {
+        val shouldApply = GeneralSettingsViewModel.shouldApplyThemeChange(
+            previousThemeMode = AppThemeMode.LIGHT,
+            targetThemeMode = AppThemeMode.LIGHT,
+            systemIsDark = false
+        )
+
+        assertFalse(shouldApply)
+    }
+
+    @Test
+    fun shouldApplyThemeChange_returnsTrueWhenEffectiveThemeChanges() {
+        val shouldApply = GeneralSettingsViewModel.shouldApplyThemeChange(
+            previousThemeMode = AppThemeMode.DARK,
+            targetThemeMode = AppThemeMode.LIGHT,
+            systemIsDark = true
+        )
+
+        assertTrue(shouldApply)
     }
 
     private class FakePreferences(
@@ -131,5 +154,11 @@ class GeneralSettingsViewModelTest {
         override fun setGeneralVolumeBoostEnabled(enabled: Boolean) {
             currentGeneralSettings = currentGeneralSettings.copy(volumeBoostEnabled = enabled)
         }
+    }
+
+    private class FakeSystemThemeStateProvider(
+        private val systemIsDark: Boolean = false
+    ) : SystemThemeStateProvider() {
+        override fun isSystemDarkTheme(): Boolean = systemIsDark
     }
 }

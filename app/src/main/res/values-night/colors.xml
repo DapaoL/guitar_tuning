@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="green">#22C55E</color>
+
+    <color name="colorPrimary">#6366F1</color>
+    <color name="colorPrimaryDark">#0F0F23</color>
+    <color name="colorSecondary">#22C55E</color>
+    <color name="colorAccent">#FBBF24</color>
+    <color name="colorBorder">#334155</color>
+    <color name="textColor">#CBD5E1</color>
+
+    <color name="home_bg_top">#0F0F23</color>
+    <color name="home_bg_bottom">#1E1B4B</color>
+    <color name="home_surface">#D91E293B</color>
+    <color name="home_surface_strong">#F01E293B</color>
+    <color name="home_overlay">#261E293B</color>
+    <color name="home_stroke">#334155</color>
+    <color name="home_text_primary">#F8FAFC</color>
+    <color name="home_text_secondary">#CBD5E1</color>
+    <color name="home_tint_blue">#818CF8</color>
+    <color name="home_tint_cyan">#22D3EE</color>
+    <color name="home_tint_gold">#FBBF24</color>
+    <color name="home_wood_dark">#5B3417</color>
+    <color name="home_wood_light">#B7791F</color>
+
+    <color name="settings_bg_top">#0F0F23</color>
+    <color name="settings_bg_bottom">#111827</color>
+    <color name="settings_surface_soft">#E61E293B</color>
+    <color name="settings_surface_warm_top">#2A2414</color>
+    <color name="settings_surface_warm_bottom">#3A2A12</color>
+    <color name="settings_surface_primary_top">#1E1B4B</color>
+    <color name="settings_surface_primary_bottom">#172554</color>
+    <color name="settings_border">#334155</color>
+    <color name="settings_border_strong">#475569</color>
+    <color name="settings_text_primary">#F8FAFC</color>
+    <color name="settings_text_secondary">#CBD5E1</color>
+    <color name="settings_text_muted">#94A3B8</color>
+    <color name="settings_accent_gold">#FBBF24</color>
+    <color name="settings_accent_gold_soft">#3A2A12</color>
+    <color name="settings_accent_green">#22C55E</color>
+    <color name="settings_accent_green_soft">#123524</color>
+    <color name="settings_error">#F87171</color>
+    <color name="settings_input_fill">#1E293B</color>
+    <color name="settings_theme_card_selected">#24245F</color>
+    <color name="settings_theme_card_unselected">#111827</color>
+    <color name="settings_theme_light_preview_top">#F8FAFC</color>
+    <color name="settings_theme_light_preview_bottom">#E0F2FE</color>
+    <color name="settings_theme_dark_preview_top">#0F0F23</color>
+    <color name="settings_theme_dark_preview_bottom">#1E1B4B</color>
+</resources>

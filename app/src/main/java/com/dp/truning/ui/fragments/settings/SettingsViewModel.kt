@@ -23,7 +23,7 @@ class SettingsViewModel @Inject constructor(
     val selectedDisplayMode = MutableLiveData(TunerDisplayMode.POINTER)
     val metronomeLastBpm = MutableLiveData(MetronomeSettings.DEFAULT_BPM)
     val metronomeSoundType = MutableLiveData(MetronomeSoundType.WOOD_BLOCK)
-    val generalThemeMode = MutableLiveData(AppThemeMode.FOLLOW_SYSTEM)
+    val generalThemeMode = MutableLiveData(AppThemeMode.LIGHT)
     val generalKeepScreenOn = MutableLiveData(false)
     val generalVolumeBoost = MutableLiveData(false)
 
