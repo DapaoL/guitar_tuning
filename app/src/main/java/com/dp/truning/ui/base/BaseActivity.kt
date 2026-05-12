@@ -7,25 +7,21 @@ import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
 
-abstract class BaseActivity<VB : ViewBinding>(private val bindingFactory: (LayoutInflater) -> VB) : AppCompatActivity() {
-    private val TAG = "BaseActivity"
+abstract class BaseActivity<VB : ViewBinding>(
+    private val bindingFactory: (LayoutInflater) -> VB
+) : AppCompatActivity() {
+    private val tag = "BaseActivity"
 
     protected lateinit var binding: VB
     protected lateinit var sharedPref: SharedPreferences
 
     /**
-     * 在组件创建时完成初始化。
+     * 在页面创建时完成初始化。
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.i(TAG, "onCreate()")
+        Log.i(tag, "页面已创建")
         binding = bindingFactory(layoutInflater)
         setContentView(binding.root)
-
-
-
     }
-
-
-
 }

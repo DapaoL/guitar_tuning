@@ -1,58 +1,55 @@
 package com.dp.truning.common.data.preferences
 
+import com.dp.truning.domain.model.AppThemeMode
+import com.dp.truning.domain.model.GeneralSettings
+import com.dp.truning.domain.model.MetronomeSettings
+import com.dp.truning.domain.model.MetronomeSoundType
 import com.dp.truning.domain.model.TunerDisplayMode
 import com.dp.truning.domain.model.TunerSettings
 import com.dp.truning.domain.model.TuningSensitivity
 
 interface Preferences {
 
-    /**
-     * 获取 access token。
-     */
     fun getAccessToken(): String?
 
-    /**
-     * 设置 access token。
-     */
     fun setAccessToken(token: String)
-    /**
-     * 删除 access token。
-     */
+
     fun deleteAccessToken()
 
-    /**
-     * 获取 refresh token。
-     */
     fun getRefreshToken(): String?
 
-    /**
-     * 设置 refresh token。
-     */
     fun setRefreshToken(token: String)
 
-    /**
-     * 删除 refresh token。
-     */
     fun deleteRefreshToken()
 
-    /**
-     * 获取 tuner settings。
-     */
     fun getTunerSettings(): TunerSettings
 
-    /**
-     * 设置 tuner reference A 4。
-     */
     fun setTunerReferenceA4(referenceA4Hz: Int)
 
-    /**
-     * 设置 tuner sensitivity。
-     */
     fun setTunerSensitivity(sensitivity: TuningSensitivity)
 
-    /**
-     * 设置 tuner display mode。
-     */
     fun setTunerDisplayMode(displayMode: TunerDisplayMode)
 
+    fun getMetronomeSettings(): MetronomeSettings
+
+    fun setMetronomeLastBpm(lastBpm: Int)
+
+    fun setMetronomeSoundType(soundType: MetronomeSoundType)
+
+    fun setMetronomeAccentEnabled(enabled: Boolean)
+
+    fun setMetronomeVibrationEnabled(enabled: Boolean)
+
+    fun setMetronomeAccentVibrationEnabled(enabled: Boolean)
+
+    fun setMetronomeRegularVibrationEnabled(enabled: Boolean)
+
+    fun getGeneralSettings(): GeneralSettings
+
+    fun setGeneralThemeMode(themeMode: AppThemeMode)
+
+    fun setGeneralKeepScreenOnEnabled(enabled: Boolean)
+
+    fun setGeneralVolumeBoostEnabled(enabled: Boolean)
 }
+

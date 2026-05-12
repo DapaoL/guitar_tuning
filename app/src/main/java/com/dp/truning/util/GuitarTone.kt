@@ -20,12 +20,12 @@ object GuitarTone {
 
     private val canonicalStandardStrings =
         listOf(
-            GuitarString(index = 0, number = "1", label = "高音E", frequency = E1),
+            GuitarString(index = 0, number = "1", label = "高音 E", frequency = E1),
             GuitarString(index = 1, number = "2", label = "B", frequency = B2),
             GuitarString(index = 2, number = "3", label = "G", frequency = G3),
             GuitarString(index = 3, number = "4", label = "D", frequency = D4),
             GuitarString(index = 4, number = "5", label = "A", frequency = A5),
-            GuitarString(index = 5, number = "6", label = "低音E", frequency = E6)
+            GuitarString(index = 5, number = "6", label = "低音 E", frequency = E6)
         )
 
     val standardStrings: List<GuitarString>
@@ -43,7 +43,7 @@ object GuitarTone {
     }
 
     /**
-     * 返回指定索引处的标准弦信息。
+     * 返回指定索引对应的标准弦信息。
      */
     fun standardStringAt(
         index: Int,

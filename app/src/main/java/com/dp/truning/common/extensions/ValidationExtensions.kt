@@ -6,14 +6,14 @@ import java.net.MalformedURLException
 import java.net.URL
 
 /**
- * 判断是否 valid phone number。
+ * 判断是否为有效手机号。
  */
 fun String.isValidPhoneNumber(): Boolean {
-    return this.all { it.isDigit() }
+    return all { it.isDigit() }
 }
 
 /**
- * 判断是否 valid email。
+ * 判断是否为有效邮箱。
  */
 fun String.isValidEmail(): Boolean {
     if (isEmpty()) return false
@@ -21,21 +21,21 @@ fun String.isValidEmail(): Boolean {
 }
 
 /**
- * 判断是否 valid password。
+ * 判断是否为有效密码。
  */
 fun String.isValidPassword(): Boolean {
-    if (isEmpty() || this.length < 6) return false
+    if (isEmpty() || length < 6) return false
     return true
 }
 
 /**
- * 判断是否 valid url。
+ * 判断是否为有效链接。
  */
 fun String.isValidUrl(): Boolean {
     try {
         URL(this)
         return URLUtil.isValidUrl(this) && Patterns.WEB_URL.matcher(this).matches()
-    } catch (ignored: MalformedURLException) {
+    } catch (_: MalformedURLException) {
     }
     return false
 }

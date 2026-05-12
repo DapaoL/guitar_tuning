@@ -4,16 +4,15 @@ import android.util.Log
 import java.util.Locale
 
 /**
- * 将字符串首字母转换为大写形式。
+ * 将字符串首字母转换为大写。
  */
-fun String.capitalize(): String  = replaceFirstChar {
+fun String.capitalize(): String = replaceFirstChar {
     if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
 }
 
 /**
- * 输出一条调试日志。
+ * 输出调试日志。
  */
 fun String.debug(message: String) {
     Log.d(this, message)
 }
-

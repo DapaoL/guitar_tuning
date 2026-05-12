@@ -17,43 +17,43 @@ fun View.show() {
 }
 
 /**
- * 隐藏当前视图并移除布局占位。
+ * 隐藏当前视图。
  */
 fun View.gone() {
     visibility = View.GONE
 }
 
 /**
- * 显示一条短时提示信息。
+ * 显示一条短提示。
  */
 fun Context.toast(message: String) {
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }
 
 /**
- * 输出一条调试日志。
+ * 输出调试日志。
  */
 fun String.debug(message: String) {
     Log.d(this, message)
 }
 
 /**
- * 处理 modify text 相关逻辑。
+ * 更新输入框内容并把光标移到末尾。
  */
 fun EditText.modifyText(numberText: String) {
-    this.setText(numberText)
-    this.setSelection(numberText.length)
+    setText(numberText)
+    setSelection(numberText.length)
 }
 
 /**
- * 处理 go URL 相关逻辑。
+ * 打开指定链接。
  */
 fun Context.goURL(url: String) {
     try {
-        val myIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        startActivity(myIntent)
-    } catch (e: ActivityNotFoundException) {
-        this.toast("No application can handle this request. Please install a webbrowser")
-        e.printStackTrace()
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        startActivity(intent)
+    } catch (error: ActivityNotFoundException) {
+        toast("当前设备没有可用的浏览器，请先安装浏览器。")
+        error.printStackTrace()
     }
 }

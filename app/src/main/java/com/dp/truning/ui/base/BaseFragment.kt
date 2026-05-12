@@ -5,27 +5,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.createViewModelLazy
-import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
 import java.lang.reflect.ParameterizedType
 
+abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
-abstract class BaseFragment<VB : ViewBinding, VM : ViewModel> : Fragment() {
+    private var _binding: VB? = null
+    protected val binding: VB
+        get() = checkNotNull(_binding) { "Binding 只在 onCreateView 到 onDestroyView 之间可用。" }
 
-    protected lateinit var binding: VB private set
-    protected lateinit var viewModel: VM private set
+    @Suppress("UNCHECKED_CAST")
+    private val classVB: Class<VB>
+        get() = (javaClass.genericSuperclass as ParameterizedType).actualTypeArguments[0] as Class<VB>
 
-    private val type = (javaClass.genericSuperclass as ParameterizedType)
-    private val classVB = type.actualTypeArguments[0] as Class<VB>
-    private val classVM = type.actualTypeArguments[1] as Class<VM>
-
-    private val inflateMethod = classVB.getMethod(
-        "inflate",
-        LayoutInflater::class.java,
-        ViewGroup::class.java,
-        Boolean::class.java
-    )
+    private val inflateMethod by lazy(LazyThreadSafetyMode.NONE) {
+        classVB.getMethod(
+            "inflate",
+            LayoutInflater::class.java,
+            ViewGroup::class.java,
+            Boolean::class.java
+        )
+    }
 
     /**
      * 创建并返回当前 Fragment 的视图层级。
@@ -34,11 +34,15 @@ abstract class BaseFragment<VB : ViewBinding, VM : ViewModel> : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        @Suppress("UNCHECKED_CAST")
+        val viewBinding = inflateMethod.invoke(null, inflater, container, false) as VB
+        _binding = viewBinding
+        return viewBinding.root
+    }
 
-        binding = inflateMethod.invoke(null, inflater, container, false) as VB
-        viewModel = createViewModelLazy(classVM.kotlin, { viewModelStore }).value
-
-        return binding.root
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

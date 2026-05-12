@@ -12,9 +12,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val exampleRepository: ExampleRepository,
     private val preferences: Preferences
-) :
-    ViewModel() {
-    private val tag = HomeViewModel::class.java.simpleName
+) : ViewModel() {
 
     var name = MutableLiveData("5")
     var selectedLabel = MutableLiveData("A")
@@ -23,9 +21,13 @@ class HomeViewModel @Inject constructor(
     val tunerSettings = MutableLiveData(TunerSettings())
 
     /**
-     * 处理 refresh tuner settings 相关逻辑。
+     * 刷新调音器设置，确保首页展示与最新配置保持一致。
      */
     fun refreshTunerSettings() {
         tunerSettings.value = preferences.getTunerSettings()
+    }
+
+    fun getKeepScreenOnEnabled(): Boolean {
+        return preferences.getGeneralSettings().keepScreenOnEnabled
     }
 }

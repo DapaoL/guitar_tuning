@@ -33,7 +33,7 @@ object TunerMath {
     }
 
     /**
-     * 对连续结果进行平滑处理。
+     * 对连续检测结果进行平滑处理。
      */
     fun smooth(previous: Float?, next: Float, factor: Float): Float {
         if (previous == null) {

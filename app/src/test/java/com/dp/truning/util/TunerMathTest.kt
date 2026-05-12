@@ -8,7 +8,7 @@ import org.junit.Test
 class TunerMathTest {
 
     /**
-     * 验证 note name uses selected reference A 4。
+     * 验证音名计算会使用当前选择的参考 A4。
      */
     @Test
     fun noteName_usesSelectedReferenceA4() {
@@ -17,7 +17,7 @@ class TunerMathTest {
     }
 
     /**
-     * 验证 standard string at scales with reference A 4 ratio。
+     * 验证标准弦频率会按参考 A4 比例缩放。
      */
     @Test
     fun standardStringAt_scalesWithReferenceA4Ratio() {
@@ -26,7 +26,7 @@ class TunerMathTest {
     }
 
     /**
-     * 验证 cents off reflects new reference target frequency。
+     * 验证音分偏差会正确反映参考频率变化后的目标频率。
      */
     @Test
     fun centsOff_reflectsNewReferenceTargetFrequency() {
@@ -41,7 +41,7 @@ class TunerMathTest {
     }
 
     /**
-     * 验证 smooth returns next when previous is null。
+     * 验证在没有历史值时，平滑函数会直接返回当前值。
      */
     @Test
     fun smooth_returnsNextWhenPreviousIsNull() {
@@ -49,7 +49,7 @@ class TunerMathTest {
     }
 
     /**
-     * 验证 note name returns fallback for invalid inputs。
+     * 验证非法输入时音名会回退为占位符。
      */
     @Test
     fun noteName_returnsFallbackForInvalidInputs() {
@@ -60,7 +60,7 @@ class TunerMathTest {
     }
 
     /**
-     * 验证 cents off returns zero for invalid inputs。
+     * 验证非法输入时音分偏差会回退为 0。
      */
     @Test
     fun centsOff_returnsZeroForInvalidInputs() {
@@ -71,21 +71,21 @@ class TunerMathTest {
     }
 
     /**
-     * 验证 guitar tone uses safe reference fallback and original labels。
+     * 验证无效参考值会回退到默认频率，并保留当前中文弦名。
      */
     @Test
-    fun guitarTone_usesSafeReferenceFallbackAndOriginalLabels() {
+    fun guitarTone_usesSafeReferenceFallbackAndCurrentLabels() {
         val fallbackA = GuitarTone.standardStringAt(index = 4, referenceA4Hz = 0)
         assertEquals(110f, fallbackA?.frequency ?: 0f, 0.01f)
 
         val highE = GuitarTone.standardStringAt(index = 0, referenceA4Hz = 0)
         val lowE = GuitarTone.standardStringAt(index = 5, referenceA4Hz = 0)
-        assertEquals("高音E", highE?.label)
-        assertEquals("低音E", lowE?.label)
+        assertEquals("高音 E", highE?.label)
+        assertEquals("低音 E", lowE?.label)
     }
 
     /**
-     * 验证 find closest string index returns null for invalid frequency input。
+     * 验证非法频率不会匹配到最近琴弦。
      */
     @Test
     fun findClosestStringIndex_returnsNullForInvalidFrequencyInput() {

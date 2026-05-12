@@ -9,7 +9,7 @@ import org.junit.Test
 class SettingsSectionTest {
 
     /**
-     * 验证 top level sections keep approved order。
+     * 验证顶层设置分区顺序与设计约定一致。
      */
     @Test
     fun topLevelSections_keepApprovedOrder() {
@@ -26,19 +26,19 @@ class SettingsSectionTest {
     }
 
     /**
-     * 验证 only tuner section is not placeholder。
+     * 验证调音和节拍器分区不是占位页。
      */
     @Test
-    fun onlyTunerSection_isNotPlaceholder() {
+    fun tunerAndMetronomeSections_areNotPlaceholder() {
         assertFalse(SettingsSection.TUNER.usesPlaceholder)
-        assertTrue(SettingsSection.METRONOME.usesPlaceholder)
+        assertFalse(SettingsSection.METRONOME.usesPlaceholder)
         assertTrue(SettingsSection.GENERAL.usesPlaceholder)
         assertTrue(SettingsSection.SUPPORT.usesPlaceholder)
         assertTrue(SettingsSection.ABOUT.usesPlaceholder)
     }
 
     /**
-     * 验证 top level sections map to expected title resources。
+     * 验证顶层设置分区使用了正确的标题资源。
      */
     @Test
     fun topLevelSections_mapToExpectedTitleResources() {

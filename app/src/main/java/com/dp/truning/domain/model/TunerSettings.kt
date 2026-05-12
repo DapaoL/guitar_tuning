@@ -46,7 +46,7 @@ data class TunerSettings(
         const val MAX_REFERENCE_A4_HZ = 450
 
         /**
-         * 校正 A4 参考频率到允许范围内。
+         * 将 A4 参考频率校正到允许范围内。
          */
         fun sanitizeReferenceA4(raw: Int?): Int {
             if (raw == null) {

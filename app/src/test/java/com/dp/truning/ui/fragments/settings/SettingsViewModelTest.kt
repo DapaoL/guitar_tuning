@@ -2,6 +2,10 @@ package com.dp.truning.ui.fragments.settings
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.dp.truning.common.data.preferences.Preferences
+import com.dp.truning.domain.model.AppThemeMode
+import com.dp.truning.domain.model.GeneralSettings
+import com.dp.truning.domain.model.MetronomeSettings
+import com.dp.truning.domain.model.MetronomeSoundType
 import com.dp.truning.domain.model.TunerDisplayMode
 import com.dp.truning.domain.model.TunerSettings
 import com.dp.truning.domain.model.TuningSensitivity
@@ -17,7 +21,7 @@ class SettingsViewModelTest {
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     /**
-     * 验证 load settings populates ui state from saved settings。
+     * 验证加载设置后会正确填充调音页面状态。
      */
     @Test
     fun loadSettings_populatesUiStateFromSavedSettings() {
@@ -39,7 +43,7 @@ class SettingsViewModelTest {
     }
 
     /**
-     * 验证 save reference A 4 invalid value rejected and persisted value unchanged。
+     * 验证非法 A4 输入会被拒绝，且不会改动已保存值。
      */
     @Test
     fun saveReferenceA4_invalidValue_rejectedAndPersistedValueUnchanged() {
@@ -58,7 +62,7 @@ class SettingsViewModelTest {
     }
 
     /**
-     * 验证 save reference A 4 valid value persists and clears error。
+     * 验证合法 A4 输入会被保存，并清除错误状态。
      */
     @Test
     fun saveReferenceA4_validValue_persistsAndClearsError() {
@@ -78,7 +82,7 @@ class SettingsViewModelTest {
     }
 
     /**
-     * 验证 select sensitivity persists and updates state。
+     * 验证切换灵敏度时会同步更新持久化结果与页面状态。
      */
     @Test
     fun selectSensitivity_persistsAndUpdatesState() {
@@ -95,7 +99,7 @@ class SettingsViewModelTest {
     }
 
     /**
-     * 验证 select display mode persists and updates state。
+     * 验证切换显示模式时会同步更新持久化结果与页面状态。
      */
     @Test
     fun selectDisplayMode_persistsAndUpdatesState() {
@@ -120,42 +124,42 @@ class SettingsViewModelTest {
         var lastSavedDisplayMode: TunerDisplayMode? = null
 
         /**
-         * 获取 access token。
+         * 返回访问令牌。
          */
         override fun getAccessToken(): String? = null
 
         /**
-         * 设置 access token。
+         * 保存访问令牌。
          */
         override fun setAccessToken(token: String) = Unit
 
         /**
-         * 删除 access token。
+         * 删除访问令牌。
          */
         override fun deleteAccessToken() = Unit
 
         /**
-         * 获取 refresh token。
+         * 返回刷新令牌。
          */
         override fun getRefreshToken(): String? = null
 
         /**
-         * 设置 refresh token。
+         * 保存刷新令牌。
          */
         override fun setRefreshToken(token: String) = Unit
 
         /**
-         * 删除 refresh token。
+         * 删除刷新令牌。
          */
         override fun deleteRefreshToken() = Unit
 
         /**
-         * 获取 tuner settings。
+         * 返回当前调音设置。
          */
         override fun getTunerSettings(): TunerSettings = currentSettings
 
         /**
-         * 设置 tuner reference A 4。
+         * 保存 A4 参考频率。
          */
         override fun setTunerReferenceA4(referenceA4Hz: Int) {
             lastSavedReferenceA4 = referenceA4Hz
@@ -163,7 +167,7 @@ class SettingsViewModelTest {
         }
 
         /**
-         * 设置 tuner sensitivity。
+         * 保存灵敏度。
          */
         override fun setTunerSensitivity(sensitivity: TuningSensitivity) {
             lastSavedSensitivity = sensitivity
@@ -171,11 +175,33 @@ class SettingsViewModelTest {
         }
 
         /**
-         * 设置 tuner display mode。
+         * 保存显示模式。
          */
         override fun setTunerDisplayMode(displayMode: TunerDisplayMode) {
             lastSavedDisplayMode = displayMode
             currentSettings = currentSettings.copy(displayMode = displayMode)
         }
+
+        override fun getMetronomeSettings(): MetronomeSettings = MetronomeSettings()
+
+        override fun setMetronomeLastBpm(lastBpm: Int) = Unit
+
+        override fun setMetronomeSoundType(soundType: MetronomeSoundType) = Unit
+
+        override fun setMetronomeAccentEnabled(enabled: Boolean) = Unit
+
+        override fun setMetronomeVibrationEnabled(enabled: Boolean) = Unit
+
+        override fun setMetronomeAccentVibrationEnabled(enabled: Boolean) = Unit
+
+        override fun setMetronomeRegularVibrationEnabled(enabled: Boolean) = Unit
+
+        override fun getGeneralSettings(): GeneralSettings = GeneralSettings()
+
+        override fun setGeneralThemeMode(themeMode: AppThemeMode) = Unit
+
+        override fun setGeneralKeepScreenOnEnabled(enabled: Boolean) = Unit
+
+        override fun setGeneralVolumeBoostEnabled(enabled: Boolean) = Unit
     }
 }

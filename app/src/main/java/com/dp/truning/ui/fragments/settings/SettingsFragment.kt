@@ -7,11 +7,11 @@ import com.dp.truning.R
 import com.dp.truning.databinding.FragmentSettingsBinding
 import com.dp.truning.domain.model.TunerDisplayMode
 import com.dp.truning.domain.model.TuningSensitivity
-import com.dp.truning.ui.base.BaseFragment
+import com.dp.truning.ui.base.BaseVmFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SettingsFragment : BaseFragment<FragmentSettingsBinding, SettingsViewModel>() {
+class SettingsFragment : BaseVmFragment<FragmentSettingsBinding, SettingsViewModel>() {
     private var isUpdatingSelectionFromState = false
 
     /**
@@ -26,7 +26,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding, SettingsViewModel
     }
 
     /**
-     * 在界面恢复可见时刷新当前状态。
+     * 在界面恢复可见时刷新当前设置。
      */
     override fun onResume() {
         super.onResume()
@@ -34,7 +34,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding, SettingsViewModel
     }
 
     /**
-     * 处理 init view 相关逻辑。
+     * 初始化页面交互。
      */
     private fun initView() {
         binding.buttonBack.setOnClickListener {
@@ -67,6 +67,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding, SettingsViewModel
             if (isUpdatingSelectionFromState) {
                 return@setOnCheckedChangeListener
             }
+
             when (checkedId) {
                 R.id.optionDisplayGauge -> viewModel.selectDisplayMode(TunerDisplayMode.GAUGE)
                 R.id.optionDisplayPointer -> viewModel.selectDisplayMode(TunerDisplayMode.POINTER)
@@ -76,7 +77,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding, SettingsViewModel
     }
 
     /**
-     * 绑定 observers。
+     * 绑定 ViewModel 观察者。
      */
     private fun bindObservers() {
         viewModel.referenceA4Input.observe(viewLifecycleOwner) { input ->

@@ -1,23 +1,48 @@
 <resources>
-    <string name="app_name">Android MVVM Template</string>
-    <string name="home_title">首页</string>
+    <string name="app_name">吉他调音器</string>
+
+    <string name="home_title">调音器</string>
     <string name="home_hero_badge">实时监听模式</string>
     <string name="home_hero_title">吉他调音器</string>
-    <string name="home_hero_subtitle">先选择琴弦，再开启麦克风进行调音。首页聚焦常用操作和实时状态，减少跳转。</string>
-    <string name="home_button_permission">获取权限</string>
+    <string name="home_hero_subtitle">先选择琴弦，再开启麦克风进行调音。首页聚焦常用操作和实时状态，减少来回切换。</string>
+    <string name="home_button_permission">获取麦克风权限</string>
     <string name="home_button_start">开始调音</string>
     <string name="home_selected_label">当前选弦</string>
     <string name="home_selected_suffix">弦</string>
     <string name="home_strings_title">标准调弦</string>
-    <string name="home_strings_subtitle">自动识别关闭时可手动点击琴弦，开启后会根据当前音高自动切换目标弦。</string>
+    <string name="home_strings_subtitle">关闭自动识别时可手动点击琴弦，开启后会根据当前音高自动切换目标弦。</string>
     <string name="home_status_title">调音状态</string>
-    <string name="home_status_placeholder">等待开始调音</string>
-    <string name="home_status_helper">左边表示音偏低，右边表示音偏高，指针停在中间表示音准。</string>
+    <string name="home_status_placeholder">准备调音</string>
+    <string name="home_status_helper">左侧表示偏低，右侧表示偏高，指针停在中间表示音准。</string>
     <string name="home_string_suffix">弦</string>
     <string name="home_string_hint">点击选择</string>
     <string name="home_auto_detect_toggle">自动识别</string>
-    <string name="home_auto_detect_summary_on">已开启自动识别：会根据当前音高自动切换琴弦。</string>
+    <string name="home_auto_detect_summary_on">已开启自动识别：会根据当前音高自动切换目标弦。</string>
     <string name="home_auto_detect_summary_off">手动模式：点击琴弦旋钮选择目标弦。</string>
+    <string name="home_pitch_status_waiting">音准：等待检测</string>
+    <string name="home_pitch_status_format">音准：%1$s</string>
+    <string name="home_pitch_status_in_tune">音准</string>
+    <string name="home_pitch_status_flat">偏低</string>
+    <string name="home_pitch_status_sharp">偏高</string>
+    <string name="home_mic_permission_title">开启麦克风权限</string>
+    <string name="home_mic_permission_message">调音功能需要麦克风权限，是否现在开启？</string>
+    <string name="home_dialog_confirm">开启</string>
+    <string name="home_dialog_cancel">暂不</string>
+    <string name="home_mic_permission_granted">麦克风权限已获取</string>
+    <string name="home_mic_init_failed">麦克风初始化失败</string>
+    <string name="home_mic_init_failed_with_reason">麦克风初始化失败：%1$s</string>
+    <string name="home_unknown_error">未知错误</string>
+    <string name="home_listening">正在监听...</string>
+    <string name="home_mode_auto">自动识别</string>
+    <string name="home_mode_manual">手动选择</string>
+    <string name="home_numeric_frequency_format">%1$.2f Hz</string>
+    <string name="home_numeric_cents_format">%1$.1f 音分</string>
+    <string name="home_tip_tuning_detail_format">模式：%1$s
+琴弦：%2$s 弦（%3$s）
+当前频率：%4$.2f Hz
+当前音名：%5$s
+目标频率：%6$.2f Hz
+偏差：%7$.1f 音分</string>
 
     <string name="tab_tuner">调音器</string>
     <string name="tab_metronome">节拍器</string>
@@ -33,31 +58,71 @@
     <string name="settings_placeholder_message">该模块正在筹备中，后续会接入完整配置与说明。</string>
     <string name="settings_title">调音设置</string>
     <string name="settings_reference_a4_title">A4 标准音高</string>
-    <string name="settings_reference_a4_summary">输入 430 到 450 Hz 之间的值并立即应用。</string>
+    <string name="settings_reference_a4_summary">输入 430 到 450 Hz 之间的数值并立即应用。</string>
     <string name="settings_reference_a4_hint">例如 440</string>
     <string name="settings_reference_a4_apply">保存并应用</string>
-    <string name="settings_reference_a4_error_range">请输入 430 到 450 之间的数字</string>
+    <string name="settings_reference_a4_error_range">请输入 430 到 450 之间的数值。</string>
     <string name="settings_sensitivity_title">调音灵敏度</string>
     <string name="settings_sensitivity_high">高</string>
     <string name="settings_sensitivity_medium">中</string>
     <string name="settings_sensitivity_low">低</string>
     <string name="settings_display_mode_title">显示模式</string>
-    <string name="settings_display_mode_gauge">仪表盘</string>
+    <string name="settings_display_mode_gauge">仪表</string>
     <string name="settings_display_mode_pointer">指针</string>
     <string name="settings_display_mode_numeric">数字</string>
-    <string name="settings_home_badge">Control Rack</string>
+    <string name="settings_home_badge">控制面板</string>
     <string name="settings_home_sync_status">已同步</string>
-    <string name="settings_home_subtitle">调音器与节拍器个性化配置</string>
-    <string name="settings_home_status_reference">标准音</string>
+    <string name="settings_home_subtitle">调音器与节拍器的个性化配置</string>
+    <string name="settings_home_status_reference">标准音高</string>
     <string name="settings_home_status_display">显示方式</string>
     <string name="settings_home_status_sensitivity">灵敏度</string>
     <string name="settings_home_section_core">核心控制</string>
     <string name="settings_home_section_more">更多设置</string>
-    <string name="settings_home_tuner_summary">标准音与检测显示</string>
-    <string name="settings_home_metronome_summary">节拍参数与预设能力即将开放</string>
+    <string name="settings_home_tuner_summary">标准音高与检测显示</string>
+    <string name="settings_home_metronome_summary">节拍参数与反馈设置</string>
     <string name="settings_home_general_summary">通知、语言与偏好设置</string>
     <string name="settings_home_support_summary">帮助中心、反馈与版本支持</string>
     <string name="settings_home_about_summary">应用信息与项目说明</string>
     <string name="settings_home_pending_value">筹备中</string>
     <string name="settings_home_reference_format">%1$d Hz</string>
+    <string name="settings_home_metronome_bpm_format">%1$d BPM</string>
+
+    <string name="metronome_settings_badge">节拍控制</string>
+    <string name="metronome_settings_title">节拍器设置</string>
+    <string name="metronome_settings_subtitle">保存后的设置会立即生效，播放中会从下一拍开始应用。</string>
+    <string name="metronome_settings_default_bpm_title">默认节拍速度</string>
+    <string name="metronome_settings_default_bpm_summary">自动记住上次使用的节拍速度。</string>
+    <string name="metronome_settings_sound_title">节拍器音色</string>
+    <string name="metronome_settings_sound_summary">选择接下来每一拍要使用的声音。</string>
+    <string name="metronome_settings_accent_title">重音第一拍</string>
+    <string name="metronome_settings_accent_summary">第一拍仍保留在 4/4 节拍中，开启后才会使用重音声音和振动。</string>
+    <string name="metronome_settings_vibration_title">振动反馈</string>
+    <string name="metronome_settings_vibration_summary">关闭总开关时，会保留下方两个子选项的状态。</string>
+    <string name="metronome_settings_vibration_accent">第一拍振动</string>
+    <string name="metronome_settings_vibration_regular">普通拍振动</string>
+    <string name="metronome_sound_type_wood_block">木块音</string>
+    <string name="metronome_sound_type_click">点击音</string>
+    <string name="metronome_sound_type_drum">鼓点音</string>
+    <string name="metronome_sound_type_beep">提示音</string>
+    <string name="metronome_bpm_error_range">请输入 %1$d 到 %2$d 之间的节拍速度。</string>
+    <string name="metronome_bpm_invalid">节拍速度无效</string>
+    <string name="metronome_play">播放</string>
+    <string name="metronome_pause">暂停</string>
+
+    <string name="general_settings_title">通用设置</string>
+    <string name="general_settings_subtitle">主题、屏幕与音频偏好</string>
+    <string name="general_settings_theme_title">主题设置</string>
+    <string name="general_settings_theme_summary">选择应用的显示主题，切换后立即生效。</string>
+    <string name="general_settings_theme_light">浅色</string>
+    <string name="general_settings_theme_dark">深色</string>
+    <string name="general_settings_theme_follow_system">跟随系统</string>
+    <string name="general_settings_keep_screen_on_title">保持屏幕常亮</string>
+    <string name="general_settings_keep_screen_on_summary">在调音器和节拍器页面保持屏幕常亮，设置页不受影响。</string>
+    <string name="general_settings_keep_screen_on_on">常亮已开启</string>
+    <string name="general_settings_keep_screen_on_off">常亮已关闭</string>
+    <string name="general_settings_volume_boost_title">音量增强</string>
+    <string name="general_settings_volume_boost_summary">增强节拍器点击音的播放响度，不修改系统音量。</string>
+    <string name="general_settings_volume_boost_on">音量增强已开启</string>
+    <string name="general_settings_volume_boost_off">音量增强已关闭</string>
+    <string name="general_settings_home_meta_format">%1$s · %2$s</string>
 </resources>

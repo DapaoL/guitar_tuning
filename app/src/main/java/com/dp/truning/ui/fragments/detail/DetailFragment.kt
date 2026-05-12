@@ -10,14 +10,19 @@ import android.os.Handler
 import android.os.Looper
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowManager
 import android.view.animation.LinearInterpolator
 import android.widget.Toast
-import com.dp.truning.R
 import be.tarsos.dsp.AudioEvent
 import be.tarsos.dsp.AudioGenerator
 import be.tarsos.dsp.AudioProcessor
+import com.dp.truning.R
 import com.dp.truning.databinding.FragmentDetailBinding
-import com.dp.truning.ui.base.BaseFragment
+import com.dp.truning.domain.model.MetronomeBeatType
+import com.dp.truning.domain.model.MetronomePlaybackConfig
+import com.dp.truning.domain.model.MetronomeSettings
+import com.dp.truning.domain.model.MetronomeSoundType
+import com.dp.truning.ui.base.BaseVmFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.PI
 import kotlin.math.atan2
@@ -25,8 +30,7 @@ import kotlin.math.roundToInt
 import kotlin.math.sin
 
 @AndroidEntryPoint
-class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
-    private val TAG = DetailFragment::class.java.simpleName
+class DetailFragment : BaseVmFragment<FragmentDetailBinding, DetailViewModel>() {
 
     private val sampleRate = 44100
     private val bufferSize = 1024
@@ -34,59 +38,67 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
     private var generator: AudioGenerator? = null
     private var generatorThread: Thread? = null
     private var metronome: MetronomeProcessor? = null
-    private var bpm = 120
+    private var metronomeVibrator: MetronomeVibrator? = null
+    private var playbackConfig = MetronomePlaybackConfig()
+    private var bpm = MetronomeSettings.DEFAULT_BPM
     private var ringRotationAnimator: ObjectAnimator? = null
     private var isUserRotatingRing = false
     private val beatHandler = Handler(Looper.getMainLooper())
     private var visualBeatIndex = 0
     private val beatVisualizerRunnable = object : Runnable {
-        /**
-         * 处理 run 相关逻辑。
-         */
         override fun run() {
             showBeat(visualBeatIndex)
+            triggerBeatVibration(visualBeatIndex)
             visualBeatIndex = (visualBeatIndex + 1) % BEATS_PER_BAR
             beatHandler.postDelayed(this, beatIntervalMillis())
         }
     }
 
-    /**
-     * 在视图创建完成后绑定界面状态与交互。
-     */
+    private var volumeBoostEnabled = false
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.page = this
         binding.vm = viewModel
         binding.lifecycleOwner = this
-        updateBpmLabel()
-        updateBpmInput()
-        updateRingRotationFromBpm()
+        metronomeVibrator = MetronomeVibrator(requireContext())
         setupRingSpeedControl()
+        refreshMetronomeSettings(applyStoredBpm = true)
         resetBeatVisualizer()
     }
 
-    /**
-     * 处理 start 相关逻辑。
-     */
+    override fun onResume() {
+        super.onResume()
+        refreshMetronomeSettings(applyStoredBpm = generator == null)
+        applyKeepScreenOn()
+    }
+
+    override fun onPause() {
+        activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        super.onPause()
+    }
+
     fun start(@Suppress("UNUSED_PARAMETER") view: View) {
-        if (generator != null) return
-        if (!syncCustomBpm()) return
-        val mp = MetronomeProcessor(sampleRate, bpm)
-        val gen = AudioGenerator(bufferSize, 0, sampleRate).apply {
-            addAudioProcessor(mp)
+        if (generator != null) {
+            return
+        }
+        if (!syncCustomBpm()) {
+            return
+        }
+
+        val processor = MetronomeProcessor(sampleRate, playbackConfig, volumeBoostEnabled)
+        val audioGenerator = AudioGenerator(bufferSize, 0, sampleRate).apply {
+            addAudioProcessor(processor)
             addAudioProcessor(AudioTrackPlayer(sampleRate, bufferSize))
         }
-        metronome = mp
-        generator = gen
-        generatorThread = Thread(gen, "metronome-gen").also { it.start() }
+        metronome = processor
+        generator = audioGenerator
+        generatorThread = Thread(audioGenerator, "metronome-gen").also { it.start() }
         startRingRotation()
         startBeatVisualizer()
         updatePlayPauseButton()
     }
 
-    /**
-     * 处理 stop 相关逻辑。
-     */
     fun stop(@Suppress("UNUSED_PARAMETER") view: View) {
         generator?.stop()
         generator = null
@@ -97,9 +109,6 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         updatePlayPauseButton()
     }
 
-    /**
-     * 将当前值转换为 ggle playback。
-     */
     fun togglePlayback(view: View) {
         if (generator == null) {
             start(view)
@@ -108,59 +117,67 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         }
     }
 
-    /**
-     * 应用 custom speed。
-     */
     fun applyCustomSpeed(@Suppress("UNUSED_PARAMETER") view: View) {
         syncCustomBpm()
     }
 
-    /**
-     * 在视图销毁时释放与界面相关的资源。
-     */
     override fun onDestroyView() {
         stop(requireView())
+        beatHandler.removeCallbacks(beatVisualizerRunnable)
+        metronomeVibrator = null
         super.onDestroyView()
     }
 
-    /**
-     * 同步 custom bpm。
-     */
+    private fun refreshMetronomeSettings(applyStoredBpm: Boolean) {
+        val settings = viewModel.getMetronomeSettings()
+        volumeBoostEnabled = viewModel.getVolumeBoostEnabled()
+        val targetBpm = if (applyStoredBpm) settings.lastBpm else bpm
+        playbackConfig = MetronomePlaybackConfig.fromSettings(settings).copy(bpm = targetBpm)
+        applyBpm(
+            newBpm = targetBpm,
+            updateInput = applyStoredBpm,
+            updateRing = applyStoredBpm,
+            persist = false
+        )
+    }
+
+    private fun applyKeepScreenOn() {
+        val keepOn = viewModel.getKeepScreenOnEnabled()
+        if (keepOn) {
+            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+    }
+
     private fun syncCustomBpm(): Boolean {
         val customBpm = binding.bpmInput.text.toString().trim().toIntOrNull()
         if (customBpm == null || customBpm !in MIN_BPM..MAX_BPM) {
-            binding.bpmInput.error = "请输入 $MIN_BPM 到 $MAX_BPM 之间的速度"
-            Toast.makeText(requireContext(), "BPM 无效", Toast.LENGTH_SHORT).show()
+            binding.bpmInput.error = getString(R.string.metronome_bpm_error_range, MIN_BPM, MAX_BPM)
+            Toast.makeText(requireContext(), R.string.metronome_bpm_invalid, Toast.LENGTH_SHORT).show()
             return false
         }
 
-        bpm = customBpm
-        applyBpm(bpm, updateInput = false, updateRing = true)
+        binding.bpmInput.error = null
+        applyBpm(customBpm, updateInput = false, updateRing = true, persist = true)
         updateRingRotationSpeed()
         return true
     }
 
-    /**
-     * 更新 bpm label。
-     */
     private fun updateBpmLabel() {
         binding.currentBpmText.text = bpm.toString()
     }
 
-    /**
-     * 更新 play pause button。
-     */
     private fun updatePlayPauseButton() {
         val isPlaying = generator != null
         binding.playPauseButton.setImageResource(
             if (isPlaying) R.drawable.ic_metronome_pause else R.drawable.ic_metronome_play
         )
-        binding.playPauseButton.contentDescription = if (isPlaying) "暂停" else "播放"
+        binding.playPauseButton.contentDescription = getString(
+            if (isPlaying) R.string.metronome_pause else R.string.metronome_play
+        )
     }
 
-    /**
-     * 更新 bpm input。
-     */
     private fun updateBpmInput() {
         val text = bpm.toString()
         if (binding.bpmInput.text.toString() != text) {
@@ -170,48 +187,52 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         binding.bpmInput.error = null
     }
 
-    /**
-     * 应用 bpm。
-     */
     private fun applyBpm(
         newBpm: Int,
         updateInput: Boolean,
-        updateRing: Boolean
+        updateRing: Boolean,
+        persist: Boolean
     ) {
         bpm = newBpm.coerceIn(MIN_BPM, MAX_BPM)
-        metronome?.bpm = bpm
+        playbackConfig = playbackConfig.copy(bpm = bpm)
+        if (persist) {
+            viewModel.setMetronomeLastBpm(bpm)
+        }
+
+        metronome?.updateConfig(playbackConfig)
         updateBpmLabel()
-        if (updateInput) updateBpmInput()
-        if (updateRing) updateRingRotationFromBpm()
+        if (updateInput) {
+            updateBpmInput()
+        } else {
+            binding.bpmInput.error = null
+        }
+        if (updateRing) {
+            updateRingRotationFromBpm()
+        }
         if (generator != null) {
             beatHandler.removeCallbacks(beatVisualizerRunnable)
             beatHandler.postDelayed(beatVisualizerRunnable, beatIntervalMillis())
         }
     }
 
-    /**
-     * 启动 ring rotation。
-     */
     private fun startRingRotation() {
         binding.metronomeRingMarkerContainer.animate().cancel()
         updateRingRotationSpeed(forceStart = true)
     }
 
-    /**
-     * 停止 ring rotation。
-     */
     private fun stopRingRotation() {
         ringRotationAnimator?.cancel()
         ringRotationAnimator = null
         updateRingRotationFromBpm()
     }
 
-    /**
-     * 更新 ring rotation speed。
-     */
     private fun updateRingRotationSpeed(forceStart: Boolean = false) {
-        if (isUserRotatingRing) return
-        if (!forceStart && ringRotationAnimator == null) return
+        if (isUserRotatingRing) {
+            return
+        }
+        if (!forceStart && ringRotationAnimator == null) {
+            return
+        }
 
         val ring = binding.metronomeRingMarkerContainer
         val startRotation = ring.rotation
@@ -230,9 +251,6 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         }
     }
 
-    /**
-     * 配置 ring speed control。
-     */
     private fun setupRingSpeedControl() {
         binding.metronomeRingMarkerContainer.setOnTouchListener { ring, event ->
             when (event.actionMasked) {
@@ -241,12 +259,12 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
                     ring.parent.requestDisallowInterceptTouchEvent(true)
                     ringRotationAnimator?.cancel()
                     ringRotationAnimator = null
-                    applyBpm(bpmFromTouch(event, ring), updateInput = true, updateRing = true)
+                    applyBpm(bpmFromTouch(event, ring), updateInput = true, updateRing = true, persist = true)
                     true
                 }
 
                 MotionEvent.ACTION_MOVE -> {
-                    applyBpm(bpmFromTouch(event, ring), updateInput = true, updateRing = true)
+                    applyBpm(bpmFromTouch(event, ring), updateInput = true, updateRing = true, persist = true)
                     true
                 }
 
@@ -265,9 +283,6 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         }
     }
 
-    /**
-     * 处理 bpm from touch 相关逻辑。
-     */
     private fun bpmFromTouch(event: MotionEvent, ring: View): Int {
         val centerX = ring.width / 2f
         val centerY = ring.height / 2f
@@ -281,37 +296,26 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         return bpmFromRingRotation(normalizedAngle)
     }
 
-    /**
-     * 更新 ring rotation from bpm。
-     */
     private fun updateRingRotationFromBpm() {
-        if (ringRotationAnimator != null || isUserRotatingRing) return
+        if (ringRotationAnimator != null || isUserRotatingRing) {
+            return
+        }
         binding.metronomeRingMarkerContainer.rotation = ringRotationFromBpm(bpm)
     }
 
-    /**
-     * 启动 beat visualizer。
-     */
     private fun startBeatVisualizer() {
         visualBeatIndex = 0
         beatHandler.removeCallbacks(beatVisualizerRunnable)
         beatVisualizerRunnable.run()
     }
 
-    /**
-     * 停止 beat visualizer。
-     */
     private fun stopBeatVisualizer() {
         beatHandler.removeCallbacks(beatVisualizerRunnable)
         resetBeatVisualizer()
     }
 
-    /**
-     * 处理 reset beat visualizer 相关逻辑。
-     */
     private fun resetBeatVisualizer() {
-        val blocks = beatBlocks()
-        blocks.forEach { block ->
+        beatBlocks().forEach { block ->
             block.setBackgroundResource(R.drawable.bg_beat_block_inactive)
             block.alpha = 1f
             block.scaleX = 1f
@@ -319,14 +323,11 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         }
     }
 
-    /**
-     * 显示 beat。
-     */
     private fun showBeat(activeIndex: Int) {
         beatBlocks().forEachIndexed { index, block ->
             val background = when {
                 index != activeIndex -> R.drawable.bg_beat_block_inactive
-                index == 0 -> R.drawable.bg_beat_block_accent
+                playbackConfig.beatTypeFor(index) == MetronomeBeatType.ACCENT -> R.drawable.bg_beat_block_accent
                 else -> R.drawable.bg_beat_block_active
             }
             block.setBackgroundResource(background)
@@ -343,9 +344,17 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         }
     }
 
-    /**
-     * 处理 beat blocks 相关逻辑。
-     */
+    private fun triggerBeatVibration(beatIndex: Int) {
+        if (!playbackConfig.shouldVibrate(beatIndex)) {
+            return
+        }
+
+        when (playbackConfig.beatTypeFor(beatIndex)) {
+            MetronomeBeatType.ACCENT -> metronomeVibrator?.vibrateAccent()
+            MetronomeBeatType.REGULAR -> metronomeVibrator?.vibrateRegular()
+        }
+    }
+
     private fun beatBlocks() = listOf(
         binding.beatBlock1,
         binding.beatBlock2,
@@ -353,54 +362,36 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         binding.beatBlock4
     )
 
-    /**
-     * 处理 beat interval millis 相关逻辑。
-     */
     private fun beatIntervalMillis(): Long {
         return (60_000L / bpm.coerceIn(MIN_BPM, MAX_BPM)).coerceAtLeast(1L)
     }
 
-    /**
-     * 处理 ring rotation duration millis 相关逻辑。
-     */
     private fun ringRotationDurationMillis(): Long {
         val beatsPerRotation = RING_ROTATION_BEATS_PER_CYCLE / ringRotationSpeedMultiplier()
         return (beatIntervalMillis() * beatsPerRotation).toLong().coerceAtLeast(1L)
     }
 
-    /**
-     * 处理 ring rotation speed multiplier 相关逻辑。
-     */
     private fun ringRotationSpeedMultiplier(): Float {
         return RING_ROTATION_SPEED_MULTIPLIER.coerceAtLeast(0.1f)
     }
 
-    /**
-     * 处理 ring rotation from bpm 相关逻辑。
-     */
     private fun ringRotationFromBpm(value: Int): Float {
         val normalizedBpm = (value.coerceIn(MIN_BPM, MAX_BPM) - MIN_BPM).toFloat() / BPM_RANGE
         return normalizedBpm * FULL_ROTATION_DEGREES
     }
 
-    /**
-     * 处理 bpm from ring rotation 相关逻辑。
-     */
     private fun bpmFromRingRotation(rotation: Float): Int {
         val normalizedRotation = normalizeDegrees(rotation) / FULL_ROTATION_DEGREES
         return (MIN_BPM + normalizedRotation * BPM_RANGE).roundToInt().coerceIn(MIN_BPM, MAX_BPM)
     }
 
-    /**
-     * 处理 normalize degrees 相关逻辑。
-     */
     private fun normalizeDegrees(degrees: Float): Float {
         return ((degrees % FULL_ROTATION_DEGREES) + FULL_ROTATION_DEGREES) % FULL_ROTATION_DEGREES
     }
 
     companion object {
-        private const val MIN_BPM = 30
-        private const val MAX_BPM = 300
+        private const val MIN_BPM = MetronomeSettings.MIN_BPM
+        private const val MAX_BPM = MetronomeSettings.MAX_BPM
         private const val BPM_RANGE = MAX_BPM - MIN_BPM
         private const val BEATS_PER_BAR = 4
         private const val BEAT_PULSE_MILLIS = 130L
@@ -408,39 +399,140 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
         private const val QUARTER_ROTATION_DEGREES = 90f
         private const val RING_ROTATION_BEATS_PER_CYCLE = 4f
         private const val RING_ROTATION_SPEED_MULTIPLIER = 1f
+        private const val VOLUME_BOOST_FACTOR = 1.4
     }
 
     private class MetronomeProcessor(
         private val sampleRate: Int,
-        initialBpm: Int
+        initialConfig: MetronomePlaybackConfig,
+        private val volumeBoost: Boolean = false
     ) : AudioProcessor {
-        @Volatile var bpm: Int = initialBpm
-        private val clickLenSamples = (sampleRate * 0.03).toInt()
-        private val clickFreq = 1000.0
-        private var sampleCounter = 0L
+        @Volatile
+        private var activeConfig: MetronomePlaybackConfig = initialConfig
 
-        /**
-         * 处理当前音频缓冲区。
-         */
+        @Volatile
+        private var pendingConfig: MetronomePlaybackConfig? = null
+
+        private var beatIndex = 0
+        private var sampleInBeat = 0L
+        private var beatIntervalSamples = intervalSamples(initialConfig.bpm)
+        private var currentBeatSpec = buildBeatSpec(initialConfig, beatIndex, sampleRate)
+
+        fun updateConfig(config: MetronomePlaybackConfig) {
+            pendingConfig = config
+        }
+
         override fun process(audioEvent: AudioEvent): Boolean {
-            val buf = audioEvent.floatBuffer
-            val intervalSamples = (sampleRate * 60.0 / bpm).toLong().coerceAtLeast(1L)
-            for (i in buf.indices) {
-                val pos = ((sampleCounter + i) % intervalSamples).toInt()
-                buf[i] = if (pos < clickLenSamples) {
-                    val t = pos.toDouble() / sampleRate
-                    val env = 1.0 - pos.toDouble() / clickLenSamples
-                    (sin(2 * PI * clickFreq * t) * env * 0.6).toFloat()
-                } else 0f
+            val buffer = audioEvent.floatBuffer
+            for (index in buffer.indices) {
+                if (sampleInBeat == 0L) {
+                    pendingConfig?.let { nextConfig ->
+                        activeConfig = nextConfig
+                        pendingConfig = null
+                        beatIntervalSamples = intervalSamples(activeConfig.bpm)
+                    }
+                    currentBeatSpec = buildBeatSpec(activeConfig, beatIndex, sampleRate)
+                }
+
+                buffer[index] = currentBeatSpec.sampleAt(sampleInBeat.toInt())
+                sampleInBeat++
+
+                if (sampleInBeat >= beatIntervalSamples) {
+                    sampleInBeat = 0L
+                    beatIndex = (beatIndex + 1) % BEATS_PER_BAR
+                    beatIntervalSamples = intervalSamples(activeConfig.bpm)
+                }
             }
-            sampleCounter += buf.size
             return true
         }
 
-        /**
-         * 在处理结束后执行收尾逻辑。
-         */
-        override fun processingFinished() {}
+        override fun processingFinished() = Unit
+
+        private fun intervalSamples(bpm: Int): Long {
+            return (sampleRate * 60.0 / bpm.coerceIn(MIN_BPM, MAX_BPM)).toLong().coerceAtLeast(1L)
+        }
+
+        private fun buildBeatSpec(
+            config: MetronomePlaybackConfig,
+            beatIndex: Int,
+            sampleRate: Int
+        ): BeatSpec {
+            val isAccent = config.beatTypeFor(beatIndex) == MetronomeBeatType.ACCENT
+            val boostFactor = if (volumeBoost) VOLUME_BOOST_FACTOR else 1.0
+            return when (config.soundType) {
+                MetronomeSoundType.WOOD_BLOCK -> BeatSpec(
+                    waveform = Waveform.WOOD,
+                    sampleRate = sampleRate,
+                    frequency = if (isAccent) 1320.0 else 980.0,
+                    amplitude = (if (isAccent) 0.92 else 0.68) * boostFactor,
+                    lengthSamples = (sampleRate * 0.03).toInt()
+                )
+
+                MetronomeSoundType.CLICK -> BeatSpec(
+                    waveform = Waveform.CLICK,
+                    sampleRate = sampleRate,
+                    frequency = if (isAccent) 1800.0 else 1450.0,
+                    amplitude = (if (isAccent) 0.88 else 0.62) * boostFactor,
+                    lengthSamples = (sampleRate * 0.018).toInt()
+                )
+
+                MetronomeSoundType.DRUM -> BeatSpec(
+                    waveform = Waveform.DRUM,
+                    sampleRate = sampleRate,
+                    frequency = if (isAccent) 280.0 else 220.0,
+                    amplitude = (if (isAccent) 0.95 else 0.72) * boostFactor,
+                    lengthSamples = (sampleRate * 0.05).toInt()
+                )
+
+                MetronomeSoundType.BEEP -> BeatSpec(
+                    waveform = Waveform.SINE,
+                    sampleRate = sampleRate,
+                    frequency = if (isAccent) 1040.0 else 760.0,
+                    amplitude = (if (isAccent) 0.78 else 0.56) * boostFactor,
+                    lengthSamples = (sampleRate * 0.04).toInt()
+                )
+            }
+        }
+
+        private enum class Waveform {
+            WOOD,
+            CLICK,
+            DRUM,
+            SINE
+        }
+
+        private data class BeatSpec(
+            val waveform: Waveform,
+            val sampleRate: Int,
+            val frequency: Double,
+            val amplitude: Double,
+            val lengthSamples: Int
+        ) {
+            fun sampleAt(sampleIndex: Int): Float {
+                if (sampleIndex >= lengthSamples) {
+                    return 0f
+                }
+
+                val t = sampleIndex.toDouble() / sampleRate
+                val phase = 2 * PI * frequency * t
+                val progress = sampleIndex.toDouble() / lengthSamples.coerceAtLeast(1)
+                val envelope = when (waveform) {
+                    Waveform.WOOD -> (1.0 - progress) * (1.0 - progress)
+                    Waveform.CLICK -> 1.0 - progress
+                    Waveform.DRUM -> (1.0 - progress) * (1.0 - progress) * (1.0 - progress)
+                    Waveform.SINE -> 1.0 - progress
+                }
+
+                val rawSample = when (waveform) {
+                    Waveform.WOOD -> sin(phase) + 0.35 * sin(phase * 2.3)
+                    Waveform.CLICK -> if (sin(phase) >= 0) 1.0 else -1.0
+                    Waveform.DRUM -> sin(phase) + 0.18 * sin(phase * 0.5)
+                    Waveform.SINE -> sin(phase)
+                }
+
+                return (rawSample * envelope * amplitude).toFloat()
+            }
+        }
     }
 
     private class AudioTrackPlayer(
@@ -469,24 +561,18 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
             track.play()
         }
 
-        /**
-         * 处理当前音频缓冲区。
-         */
         override fun process(audioEvent: AudioEvent): Boolean {
             val floats = audioEvent.floatBuffer
             val n = floats.size
             val out = if (scratch.size == n) scratch else ShortArray(n)
             for (i in 0 until n) {
-                val s = floats[i].coerceIn(-1f, 1f) * Short.MAX_VALUE
-                out[i] = s.toInt().toShort()
+                val sample = floats[i].coerceIn(-1f, 1f) * Short.MAX_VALUE
+                out[i] = sample.toInt().toShort()
             }
             track.write(out, 0, n)
             return true
         }
 
-        /**
-         * 在处理结束后执行收尾逻辑。
-         */
         override fun processingFinished() {
             try {
                 track.stop()
