@@ -1,4 +1,4 @@
-package com.dp.truning.ui.activitys
+package com.dp.guitartuning.ui.activitys
 
 import android.view.View
 import androidx.test.espresso.UiController
@@ -13,7 +13,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.dp.truning.R
+import com.dp.guitartuning.R
 import android.os.ParcelFileDescriptor
 import org.hamcrest.Matcher
 import org.junit.Test

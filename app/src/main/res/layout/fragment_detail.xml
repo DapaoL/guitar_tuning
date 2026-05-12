@@ -4,11 +4,11 @@
     <data>
         <variable
             name="page"
-            type="com.dp.truning.ui.fragments.detail.DetailFragment" />
+            type="com.dp.guitartuning.ui.fragments.detail.DetailFragment" />
 
         <variable
             name="vm"
-            type="com.dp.truning.ui.fragments.detail.DetailViewModel" />
+            type="com.dp.guitartuning.ui.fragments.detail.DetailViewModel" />
     </data>
 
     <FrameLayout

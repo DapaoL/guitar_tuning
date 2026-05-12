@@ -24,16 +24,16 @@ android {
             if (propsFile.exists()) {
                 props.load(propsFile.newDataInputStream())
             }
-            storeFile file(props.getProperty('RELEASE_STORE_FILE', 'keystore/guitar_tuning.jks'))
+            storeFile file(props.getProperty('RELEASE_STORE_FILE'))
             storePassword props.getProperty('RELEASE_STORE_PASSWORD', '')
             keyAlias props.getProperty('RELEASE_KEY_ALIAS', '')
             keyPassword props.getProperty('RELEASE_KEY_PASSWORD', '')
         }
     }
     compileSdk appCompileSdkVersion
-    namespace "com.dp.truning"
+    namespace "com.dp.guitartuning"
     defaultConfig {
-        applicationId "com.ferhatozcelik.androidmvvmtemplate"
+        applicationId "com.dp.guitartuning"
         minSdkVersion appMinSdkVersion
         targetSdkVersion appTargetSdkVersion
         versionCode 1

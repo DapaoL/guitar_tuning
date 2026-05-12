@@ -1,0 +1,29 @@
+package com.dp.guitartuning.ui.fragments.settings
+
+import androidx.annotation.StringRes
+import com.dp.guitartuning.R
+
+enum class SettingsSection(
+    @StringRes val titleRes: Int,
+    val usesPlaceholder: Boolean
+) {
+    TUNER(R.string.settings_item_tuner, false),
+    METRONOME(R.string.settings_item_metronome, false),
+    GENERAL(R.string.settings_item_general, true),
+    SUPPORT(R.string.settings_item_support, true),
+    ABOUT(R.string.settings_item_about, false),
+    PERMISSIONS(R.string.about_settings_permissions_title, false);
+
+    companion object {
+        /**
+         * 返回顶层设置分区，顺序与设计稿保持一致。
+         */
+        fun topLevel(): List<SettingsSection> = listOf(
+            TUNER,
+            METRONOME,
+            GENERAL,
+            SUPPORT,
+            ABOUT
+        )
+    }
+}

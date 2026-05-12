@@ -5,11 +5,11 @@
     <data>
         <variable
             name="page"
-            type="com.dp.truning.ui.fragments.home.HomeFragment" />
+            type="com.dp.guitartuning.ui.fragments.home.HomeFragment" />
 
         <variable
             name="vm"
-            type="com.dp.truning.ui.fragments.home.HomeViewModel" />
+            type="com.dp.guitartuning.ui.fragments.home.HomeViewModel" />
     </data>
 
     <ScrollView
