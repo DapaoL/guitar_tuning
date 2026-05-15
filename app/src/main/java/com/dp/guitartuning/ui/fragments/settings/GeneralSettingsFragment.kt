@@ -26,15 +26,7 @@ class GeneralSettingsFragment :
     }
 
     private fun initView() {
-        binding.buttonBack.setOnClickListener {
-            (parentFragment as? SettingsNavigationHost)?.goBackFromSettingsChild()
-        }
-
-        binding.cardThemeLight.setOnClickListener { handleThemeSelection(AppThemeMode.LIGHT) }
-        binding.cardThemeDark.setOnClickListener { handleThemeSelection(AppThemeMode.DARK) }
-
-        bindToggle(binding.switchKeepScreenOn) { viewModel.setKeepScreenOnEnabled(it) }
-        bindToggle(binding.switchVolumeBoost) { viewModel.setVolumeBoostEnabled(it) }
+        binding.page = this
     }
 
     private fun bindObservers() {
@@ -51,13 +43,31 @@ class GeneralSettingsFragment :
         }
     }
 
-    private fun bindToggle(toggle: SwitchCompat, onChanged: (Boolean) -> Unit) {
-        toggle.setOnCheckedChangeListener { _, isChecked ->
-            if (isUpdatingToggleFromState) {
-                return@setOnCheckedChangeListener
-            }
-            onChanged(isChecked)
+
+    fun goBack(@Suppress("UNUSED_PARAMETER") view: View) {
+        (parentFragment as? SettingsNavigationHost)?.goBackFromSettingsChild()
+    }
+
+    fun selectLightTheme(@Suppress("UNUSED_PARAMETER") view: View) {
+        handleThemeSelection(AppThemeMode.LIGHT)
+    }
+
+    fun selectDarkTheme(@Suppress("UNUSED_PARAMETER") view: View) {
+        handleThemeSelection(AppThemeMode.DARK)
+    }
+
+    fun toggleKeepScreenOn(view: View) {
+        if (isUpdatingToggleFromState) {
+            return
         }
+        viewModel.setKeepScreenOnEnabled((view as SwitchCompat).isChecked)
+    }
+
+    fun toggleVolumeBoost(view: View) {
+        if (isUpdatingToggleFromState) {
+            return
+        }
+        viewModel.setVolumeBoostEnabled((view as SwitchCompat).isChecked)
     }
 
     private fun updateToggle(toggle: SwitchCompat, enabled: Boolean) {

@@ -5,7 +5,10 @@
             <item>
                 <shape android:shape="rectangle">
                     <corners android:radius="16dp" />
-                    <solid android:color="@color/colorSecondary" />
+                    <gradient
+                        android:angle="0"
+                        android:endColor="#F2C15B"
+                        android:startColor="@color/colorSecondary" />
                 </shape>
             </item>
         </layer-list>

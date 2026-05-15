@@ -4,8 +4,8 @@
         <shape android:shape="rectangle">
             <gradient
                 android:angle="270"
-                android:endColor="#111827"
-                android:startColor="#0F0F23" />
+                android:endColor="@color/home_bg_bottom"
+                android:startColor="@color/home_bg_top" />
         </shape>
     </item>
 
@@ -13,8 +13,8 @@
         <shape android:shape="rectangle">
             <gradient
                 android:angle="270"
-                android:endColor="#00FFFFFF"
-                android:startColor="#1E1B4B" />
+                android:endColor="#00F6B84A"
+                android:startColor="#33241008" />
         </shape>
     </item>
 </layer-list>

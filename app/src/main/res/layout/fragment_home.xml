@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="page"
             type="com.dp.guitartuning.ui.fragments.home.HomeFragment" />
@@ -29,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/home_title"
-                android:textColor="@color/white"
+                android:textColor="@color/home_text_primary"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -40,7 +41,8 @@
                 android:background="@drawable/bg_home_surface"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="18dp">
+                android:padding="18dp"
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -58,13 +60,12 @@
                 </LinearLayout>
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch_auto_detect"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="@={vm.autoDetectEnabled}"
                     android:text="@string/home_auto_detect_toggle"
                     android:textColor="@color/home_text_primary"
-                    app:thumbTint="@color/home_tint_blue"
+                    app:thumbTint="@color/home_tint_gold"
                     app:trackTint="@color/home_stroke" />
             </LinearLayout>
 
@@ -73,7 +74,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:gravity="center"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <Button
                     android:layout_width="0dp"
@@ -101,14 +103,34 @@
                 android:orientation="vertical"
                 android:padding="18dp">
 
-                <TextView
-                    android:id="@+id/tv_tip"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/home_status_placeholder"
-                    android:textColor="@color/home_text_primary"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_tip"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:onClick="@{page::requestMicFromPermissionTip}"
+                        android:text="@string/home_status_placeholder"
+                        android:textColor="@color/home_text_primary"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:visibility="invisible" />
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switch_auto_detect"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="@={vm.autoDetectEnabled}"
+                        android:text="@string/home_auto_detect_toggle"
+                        android:textColor="@color/home_text_primary"
+                        app:thumbTint="@color/home_tint_gold"
+                        app:trackTint="@color/home_stroke" />
+                </LinearLayout>
+
 
                 <TextView
                     android:id="@+id/tv_pitch_status"
@@ -250,7 +272,8 @@
                     android:text="@string/home_strings_title"
                     android:textColor="@color/home_text_primary"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -258,7 +281,8 @@
                     android:layout_marginTop="6dp"
                     android:text="@string/home_strings_subtitle"
                     android:textColor="@color/home_text_secondary"
-                    android:textSize="13sp" />
+                    android:textSize="13sp"
+                    android:visibility="gone" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -270,191 +294,210 @@
                     android:text='@{"当前选弦 " + vm.name + " · " + vm.selectedLabel}'
                     android:textColor="@color/home_overlay"
                     android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone" />
 
-                <LinearLayout
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:gravity="center"
+                    android:background="@drawable/guitar_ic"
                     android:orientation="horizontal">
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center_horizontal"
+                        android:layout_gravity="center|start"
+                        android:layout_marginBottom="20dp"
+                        android:gravity="center"
                         android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/knob1"
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
-                            android:background="@drawable/bg_home_tuner_knob"
-                            android:gravity="center"
-                            android:tag="0"
-                            android:text="1"
-                            android:textColor="@color/text_tuner_knob"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-
-                        <TextView
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="高音 E"
-                            android:textColor="@color/home_text_secondary"
-                            android:textSize="11sp" />
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/knob4"
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:background="@drawable/bg_home_tuner_knob"
+                                android:gravity="center"
+                                android:onClick="@{page::selectString}"
+                                android:tag="3"
+                                android:text="4"
+                                android:textColor="@color/text_tuner_knob"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="D"
+                                android:textColor="@color/home_text_secondary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/knob5"
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:background="@drawable/bg_home_tuner_knob"
+                                android:gravity="center"
+                                android:onClick="@{page::selectString}"
+                                android:tag="4"
+                                android:text="5"
+                                android:textColor="@color/text_tuner_knob"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="A"
+                                android:textColor="@color/home_text_secondary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/knob6"
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:background="@drawable/bg_home_tuner_knob"
+                                android:gravity="center"
+                                android:onClick="@{page::selectString}"
+                                android:tag="5"
+                                android:text="6"
+                                android:textColor="@color/text_tuner_knob"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="低音 E"
+                                android:textColor="@color/home_text_secondary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center_horizontal"
+                        android:layout_gravity="center|end"
+                        android:layout_marginBottom="20dp"
+                        android:gravity="center"
                         android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/knob2"
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
-                            android:background="@drawable/bg_home_tuner_knob"
-                            android:gravity="center"
-                            android:tag="1"
-                            android:text="2"
-                            android:textColor="@color/text_tuner_knob"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-
-                        <TextView
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="B"
-                            android:textColor="@color/home_text_secondary"
-                            android:textSize="11sp" />
-                    </LinearLayout>
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/knob3"
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:background="@drawable/bg_home_tuner_knob"
+                                android:gravity="center"
+                                android:onClick="@{page::selectString}"
+                                android:tag="2"
+                                android:text="3"
+                                android:textColor="@color/text_tuner_knob"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
 
-                        <TextView
-                            android:id="@+id/knob3"
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
-                            android:background="@drawable/bg_home_tuner_knob"
-                            android:gravity="center"
-                            android:tag="2"
-                            android:text="3"
-                            android:textColor="@color/text_tuner_knob"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="G"
+                                android:textColor="@color/home_text_secondary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="G"
-                            android:textColor="@color/home_text_secondary"
-                            android:textSize="11sp" />
-                    </LinearLayout>
-                </LinearLayout>
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                            <TextView
+                                android:id="@+id/knob2"
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:background="@drawable/bg_home_tuner_knob"
+                                android:gravity="center"
+                                android:onClick="@{page::selectString}"
+                                android:tag="1"
+                                android:text="2"
+                                android:textColor="@color/text_tuner_knob"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="B"
+                                android:textColor="@color/home_text_secondary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/knob4"
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
-                            android:background="@drawable/bg_home_tuner_knob"
-                            android:gravity="center"
-                            android:tag="3"
-                            android:text="4"
-                            android:textColor="@color/text_tuner_knob"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-
-                        <TextView
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="D"
-                            android:textColor="@color/home_text_secondary"
-                            android:textSize="11sp" />
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/knob1"
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:background="@drawable/bg_home_tuner_knob"
+                                android:gravity="center"
+                                android:onClick="@{page::selectString}"
+                                android:tag="0"
+                                android:text="1"
+                                android:textColor="@color/text_tuner_knob"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="高音 E"
+                                android:textColor="@color/home_text_secondary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
+                </FrameLayout>
 
-                        <TextView
-                            android:id="@+id/knob5"
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
-                            android:background="@drawable/bg_home_tuner_knob"
-                            android:gravity="center"
-                            android:tag="4"
-                            android:text="5"
-                            android:textColor="@color/text_tuner_knob"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="A"
-                            android:textColor="@color/home_text_secondary"
-                            android:textSize="11sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/knob6"
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
-                            android:background="@drawable/bg_home_tuner_knob"
-                            android:gravity="center"
-                            android:tag="5"
-                            android:text="6"
-                            android:textColor="@color/text_tuner_knob"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="低音 E"
-                            android:textColor="@color/home_text_secondary"
-                            android:textSize="11sp" />
-                    </LinearLayout>
-                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

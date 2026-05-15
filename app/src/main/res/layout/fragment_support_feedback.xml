@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="page"
+            type="com.dp.guitartuning.ui.fragments.settings.SupportFeedbackFragment" />
+    </data>
+
+<FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -22,7 +31,7 @@
             android:orientation="vertical"
             android:paddingBottom="110dp">
 
-            <!-- 联系邮箱 -->
+            <!-- 鑱旂郴閭 -->
             <LinearLayout
                 android:id="@+id/itemEmail"
                 android:layout_width="match_parent"
@@ -32,7 +41,8 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:orientation="vertical"
-                android:padding="18dp">
+                android:padding="18dp"
+                android:onClick="@{page::copyEmail}">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -61,7 +71,7 @@
 
             </LinearLayout>
 
-            <!-- 应用评分 -->
+            <!-- 搴旂敤璇勫垎 -->
             <LinearLayout
                 android:id="@+id/itemRate"
                 android:layout_width="match_parent"
@@ -71,7 +81,8 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:orientation="vertical"
-                android:padding="18dp">
+                android:padding="18dp"
+                android:onClick="@{page::showRatePlaceholder}">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -91,7 +102,7 @@
 
             </LinearLayout>
 
-            <!-- 分享 App -->
+            <!-- 鍒嗕韩 App -->
             <LinearLayout
                 android:id="@+id/itemShare"
                 android:layout_width="match_parent"
@@ -101,7 +112,8 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:orientation="vertical"
-                android:padding="18dp">
+                android:padding="18dp"
+                android:onClick="@{page::showSharePlaceholder}">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -125,12 +137,12 @@
 
     </ScrollView>
 
-    <!-- 顶部浮动标题栏 -->
+    <!-- 椤堕儴娴姩鏍囬鏍?-->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:background="@color/settings_bg_top">
+        android:background="@drawable/bg_settings_screen">
 
         <TextView
             android:id="@+id/textViewTitle"
@@ -171,8 +183,10 @@
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/textViewTitle"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textViewTitle" />
+            app:layout_constraintTop_toTopOf="@+id/textViewTitle"
+                android:onClick="@{page::goBack}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
+</layout>

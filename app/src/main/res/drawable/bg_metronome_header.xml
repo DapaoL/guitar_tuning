@@ -4,9 +4,9 @@
     <corners android:radius="24dp" />
     <gradient
         android:angle="315"
-        android:endColor="#15243D"
-        android:startColor="#0B1220" />
+        android:endColor="@color/home_wood_dark"
+        android:startColor="@color/home_wood_light" />
     <stroke
         android:width="1dp"
-        android:color="#243A5E" />
+        android:color="@color/home_tint_gold" />
 </shape>

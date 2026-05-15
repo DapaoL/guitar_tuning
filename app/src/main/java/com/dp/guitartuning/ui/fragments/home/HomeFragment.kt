@@ -3,19 +3,23 @@ package com.dp.guitartuning.ui.fragments.home
 import android.app.ActivityManager
 import android.content.Context.MODE_PRIVATE
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.media.AudioFormat
 import android.media.AudioManager
 import android.media.AudioRecord
 import android.media.AudioTrack
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import be.tarsos.dsp.AudioDispatcher
 import be.tarsos.dsp.pitch.PitchDetectionHandler
 import be.tarsos.dsp.pitch.PitchProcessor
 import com.dp.guitartuning.R
+import com.dp.guitartuning.databinding.DialogMicrophonePermissionBinding
 import com.dp.guitartuning.databinding.FragmentHomeBinding
 import com.dp.guitartuning.domain.model.TunerDisplayMode
 import com.dp.guitartuning.domain.model.TunerSettings
@@ -43,7 +47,13 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private var audioDispatcher: AudioDispatcher? = null
     private var audioThread: Thread? = null
+    private var microphonePermissionDialog: AlertDialog? = null
+    private var pendingMicPermissionGrantedToast = false
+    private var pendingMicPermissionStartTuner = false
     private val tonePreviewPlayer = TonePreviewPlayer()
+    private val pitchPointerUpdateScheduler = PitchPointerUpdateScheduler { centDiff ->
+        updatePitchPointer(centDiff)
+    }
 
     private var centRange = 12f
     private val pointerRange = 50f
@@ -63,11 +73,15 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
     /**
      * 在界面恢复可见时刷新调音配置，并根据权限状态决定是否自动进入监听。
      */
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onResume() {
         super.onResume()
         viewModel.refreshTunerSettings()
         applyTunerSettings()
         applyKeepScreenOn()
+        if (MicrophonePermissionHelper.hasPermission(this)) {
+            hidePermissionTip()
+        }
         if (!shouldSkipAutoEntry()) {
             handleTunerEntry()
         }
@@ -89,10 +103,10 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun initView() {
         binding.tvTip.text = getString(R.string.home_status_placeholder)
         binding.tvTip.setTextColor(Color.BLACK)
+        binding.tvTip.visibility = View.INVISIBLE
         binding.tvPitchStatus.text = getString(R.string.home_pitch_status_waiting)
         binding.tvPitchStatus.setTextColor(Color.BLACK)
         updatePitchPointer(0f)
-        bindStringKnobs()
 
         viewModel.selectedIndex.observe(viewLifecycleOwner) { selectedIndex ->
             updateKnobSelection(selectedIndex)
@@ -105,34 +119,48 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
 
         updateSelectedString(viewModel.selectedIndex.value ?: 4)
         updateAutoDetectSummary(viewModel.autoDetectEnabled.value == true)
+        hidePermissionTip()
+    }
+
+    /**
+     * 隐藏麦克风权限提示。
+     */
+    private fun hidePermissionTip() {
+        binding.tvTip.isClickable = false
+        binding.tvTip.visibility = View.INVISIBLE
+        binding.tvTip.text = getString(R.string.home_status_placeholder)
+        binding.tvTip.setTextColor(Color.BLACK)
+    }
+
+    /**
+     * 在麦克风权限获取失败后显示可重新申请的提示。
+     */
+    private fun showPermissionDeniedTip() {
+        val actionText = getString(R.string.home_mic_permission_inline_action)
+        binding.tvTip.text = getString(R.string.home_mic_permission_inline_prompt, actionText)
+        binding.tvTip.setTextColor(Color.BLACK)
+        binding.tvTip.paint.isUnderlineText = true
+        binding.tvTip.isClickable = true
+        binding.tvTip.visibility = View.VISIBLE
+    }
+
+    fun requestMicFromPermissionTip(@Suppress("UNUSED_PARAMETER") view: View) {
+        requestMicrophonePermission(
+            showGrantedToast = true,
+            startTunerAfterGrant = false
+        )
     }
 
     /**
      * 手动选择目标琴弦。
      */
     fun selectString(view: View) {
+        if (viewModel.autoDetectEnabled.value == true) {
+            return
+        }
         val selectedIndex = view.tag?.toString()?.toIntOrNull() ?: return
         updateSelectedString(selectedIndex)
-        if (viewModel.autoDetectEnabled.value != true) {
-            playSelectedStringTone()
-        }
-    }
-
-    /**
-     * 为六个旋钮绑定交互逻辑。
-     */
-    private fun bindStringKnobs() {
-        getStringKnobs().forEachIndexed { index, knob ->
-            knob.isClickable = true
-            knob.isFocusable = true
-            knob.setOnClickListener {
-                if (viewModel.autoDetectEnabled.value == true) {
-                    return@setOnClickListener
-                }
-                updateSelectedString(index)
-                playSelectedStringTone()
-            }
-        }
+        playSelectedStringTone()
     }
 
     /**
@@ -253,7 +281,11 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
      * 手动触发麦克风权限申请。
      */
     fun getMic(@Suppress("UNUSED_PARAMETER") view: View) {
-        requestMicrophonePermission(showGrantedToast = true, startTunerAfterGrant = false)
+        if (MicrophonePermissionHelper.hasPermission(this)) {
+            requireActivity().toast(getString(R.string.home_mic_permission_granted))
+            return
+        }
+        showMicrophonePermissionGuide(showGrantedToast = true, startTunerAfterGrant = false)
     }
 
     /**
@@ -264,7 +296,7 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
             startTunerInternal()
             return
         }
-        requestMicrophonePermission(showGrantedToast = false, startTunerAfterGrant = true)
+        showMicrophonePermissionGuide(showGrantedToast = false, startTunerAfterGrant = true)
     }
 
     /**
@@ -281,13 +313,14 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
         }
 
         if (!hasShownMicPermissionGuide()) {
-            showMicrophonePermissionGuide()
+            showMicrophonePermissionGuide(showGrantedToast = false, startTunerAfterGrant = true)
         }
     }
 
     /**
      * 判断当前是否应跳过自动进入监听。
      */
+    @RequiresApi(Build.VERSION_CODES.Q)
     private fun shouldSkipAutoEntry(): Boolean {
         return ActivityManager.isRunningInUserTestHarness() ||
             requireActivity().intent.getBooleanExtra(MainActivity.EXTRA_SKIP_HOME_AUTO_ENTRY, false)
@@ -296,21 +329,59 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
     /**
      * 显示麦克风权限引导弹窗。
      */
-    private fun showMicrophonePermissionGuide() {
+    private fun showMicrophonePermissionGuide(
+        showGrantedToast: Boolean,
+        startTunerAfterGrant: Boolean
+    ) {
+        if (!isAdded) {
+            return
+        }
+
         markMicPermissionGuideShown()
-        AlertDialog.Builder(requireContext())
-            .setTitle(R.string.home_mic_permission_title)
-            .setMessage(R.string.home_mic_permission_message)
-            .setPositiveButton(R.string.home_dialog_confirm) { _, _ ->
-                requestMicrophonePermission(showGrantedToast = false, startTunerAfterGrant = true)
+        pendingMicPermissionGrantedToast = showGrantedToast
+        pendingMicPermissionStartTuner = startTunerAfterGrant
+        val dialogBinding = DialogMicrophonePermissionBinding.inflate(layoutInflater)
+        dialogBinding.page = this
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogBinding.root)
+            .create()
+        microphonePermissionDialog = dialog
+        dialog.setOnDismissListener {
+            if (microphonePermissionDialog === dialog) {
+                microphonePermissionDialog = null
             }
-            .setNegativeButton(R.string.home_dialog_cancel, null)
-            .show()
+        }
+
+        dialog.setOnShowListener {
+            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            val density = resources.displayMetrics.density
+            val dialogWidth = (resources.displayMetrics.widthPixels - (40 * density).roundToInt())
+                .coerceAtMost((340 * density).roundToInt())
+            dialog.window?.setLayout(dialogWidth, WindowManager.LayoutParams.WRAP_CONTENT)
+        }
+        dialog.show()
     }
 
     /**
      * 请求麦克风权限，并根据结果更新页面状态。
      */
+    fun allowMicrophonePermission(@Suppress("UNUSED_PARAMETER") view: View) {
+        microphonePermissionDialog?.dismiss()
+        requestMicrophonePermission(
+            showGrantedToast = pendingMicPermissionGrantedToast,
+            startTunerAfterGrant = pendingMicPermissionStartTuner
+        )
+    }
+
+    fun skipMicrophonePermission(@Suppress("UNUSED_PARAMETER") view: View) {
+        microphonePermissionDialog?.dismiss()
+    }
+
+    fun toggleMicrophonePermissionDetails(view: View) {
+        val detailText = view.rootView.findViewById<View>(R.id.micPermissionDetailsText) ?: return
+        detailText.visibility = if (detailText.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+    }
+
     private fun requestMicrophonePermission(
         showGrantedToast: Boolean,
         startTunerAfterGrant: Boolean
@@ -321,11 +392,14 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
                 if (showGrantedToast) {
                     requireActivity().toast(getString(R.string.home_mic_permission_granted))
                 }
+                hidePermissionTip()
                 if (startTunerAfterGrant) {
                     startTunerInternal()
                 }
             },
             onDenied = { doNotAskAgain ->
+                requireActivity().toast(getString(R.string.home_mic_permission_required))
+                showPermissionDeniedTip()
                 if (doNotAskAgain) {
                     MicrophonePermissionHelper.openAppSettings(this)
                 }
@@ -413,15 +487,17 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
 
         audioDispatcher = dispatcher
         audioThread = Thread(dispatcher, "Audio Dispatcher").also { it.start() }
-
-        binding.tvTip.text = getString(R.string.home_listening)
-        binding.tvTip.setTextColor(Color.BLACK)
+        hidePermissionTip()
     }
 
     /**
      * 根据当前频率刷新调音界面。
      */
     private fun updateTunerUI(currentFreq: Float) {
+        if (view == null) {
+            return
+        }
+
         val settings = currentSettings()
         if (viewModel.autoDetectEnabled.value == true) {
             GuitarTone.findClosestStringIndex(currentFreq, settings.referenceA4Hz)?.let(::updateSelectedString)
@@ -430,12 +506,6 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
         val selectedString = getSelectedString()
         val note = TunerMath.noteName(currentFreq, settings.referenceA4Hz)
         val centDiff = TunerMath.centsOff(currentFreq, selectedString.frequency)
-        val modeLabel = if (viewModel.autoDetectEnabled.value == true) {
-            getString(R.string.home_mode_auto)
-        } else {
-            getString(R.string.home_mode_manual)
-        }
-
         val statusLabel: String
         val statusColor: Int
         when {
@@ -462,30 +532,29 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
         binding.tvNumericNote.text = note
         binding.tvNumericFrequency.text = getString(R.string.home_numeric_frequency_format, currentFreq)
         binding.tvNumericCents.text = getString(R.string.home_numeric_cents_format, centDiff)
-        binding.tvTip.text = getString(
-            R.string.home_tip_tuning_detail_format,
-            modeLabel,
-            selectedString.number,
-            selectedString.label,
-            currentFreq,
-            note,
-            selectedString.frequency,
-            centDiff
-        )
-        binding.tvTip.setTextColor(statusColor)
+        hidePermissionTip()
     }
 
     /**
      * 按音分偏差更新指针位置。
      */
     private fun updatePitchPointer(centDiff: Float) {
-        val pointer = binding.tvPitchPointer
-        val container = binding.pitchPointerContainer
-        if (container.width == 0 || pointer.width == 0) {
-            container.post { updatePitchPointer(centDiff) }
+        if (view == null) {
             return
         }
 
+        val pointer = binding.tvPitchPointer
+        val container = binding.pitchPointerContainer
+        if (container.width == 0 || pointer.width == 0) {
+            pitchPointerUpdateScheduler.schedule(
+                centDiff = centDiff,
+                post = { runnable -> container.post(runnable) },
+                remove = { runnable -> container.removeCallbacks(runnable) }
+            )
+            return
+        }
+
+        pitchPointerUpdateScheduler.clear()
         val normalizedOffset = centDiff.coerceIn(-pointerRange, pointerRange) / pointerRange
         val maxOffset = (container.width - pointer.width) / 2f
         pointer.translationX = normalizedOffset * maxOffset
@@ -513,6 +582,7 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
      * 在视图销毁时释放首页相关资源。
      */
     override fun onDestroyView() {
+        pitchPointerUpdateScheduler.clear()
         stopTuner()
         tonePreviewPlayer.stop()
         super.onDestroyView()
@@ -639,4 +709,49 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
             }
         }
     }
+}
+
+internal class PitchPointerUpdateScheduler(
+    private val onUpdate: (Float) -> Unit
+) {
+    private var pendingUpdate: PendingUpdate? = null
+
+    fun schedule(
+        centDiff: Float,
+        post: (Runnable) -> Unit,
+        remove: (Runnable) -> Unit
+    ) {
+        clear()
+
+        var scheduledUpdate: PendingUpdate? = null
+        val runnable = Runnable {
+            val currentUpdate = pendingUpdate ?: return@Runnable
+            if (currentUpdate !== scheduledUpdate) {
+                return@Runnable
+            }
+            pendingUpdate = null
+            onUpdate(currentUpdate.centDiff)
+        }
+
+        scheduledUpdate = PendingUpdate(
+            centDiff = centDiff,
+            runnable = runnable,
+            remove = remove
+        )
+        pendingUpdate = scheduledUpdate
+        post(runnable)
+    }
+
+    fun clear() {
+        pendingUpdate?.let { update ->
+            update.remove(update.runnable)
+        }
+        pendingUpdate = null
+    }
+
+    private class PendingUpdate(
+        val centDiff: Float,
+        val runnable: Runnable,
+        val remove: (Runnable) -> Unit
+    )
 }

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="page"
+            type="com.dp.guitartuning.ui.fragments.home.HomeFragment" />
+    </data>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_microphone_permission_dialog"
+    android:orientation="vertical"
+    android:paddingStart="22dp"
+    android:paddingTop="28dp"
+    android:paddingEnd="22dp"
+    android:paddingBottom="20dp">
+
+    <FrameLayout
+        android:layout_width="76dp"
+        android:layout_height="76dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/bg_microphone_permission_icon">
+
+        <ImageView
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/home_mic_permission_icon_description"
+            android:src="@drawable/ic_microphone_permission" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/micPermissionTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:fontFamily="@font/poppins_bold"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="@string/home_mic_permission_title"
+        android:textColor="@color/settings_text_primary"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/micPermissionMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/poppins_medium"
+        android:gravity="center"
+        android:lineSpacingExtra="3dp"
+        android:text="@string/home_mic_permission_message"
+        android:textColor="@color/settings_text_secondary"
+        android:textSize="14sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_microphone_permission_chip"
+                android:fontFamily="@font/poppins_medium"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:text="@string/home_mic_permission_chip_tuning_only"
+                android:textColor="@color/settings_text_secondary"
+                android:textSize="11sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_microphone_permission_chip"
+                android:fontFamily="@font/poppins_medium"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:text="@string/home_mic_permission_chip_no_recording"
+                android:textColor="@color/settings_text_secondary"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_microphone_permission_chip"
+            android:fontFamily="@font/poppins_medium"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:text="@string/home_mic_permission_chip_can_close"
+            android:textColor="@color/settings_text_secondary"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/buttonAllowMicPermission"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="22dp"
+        android:background="@drawable/bg_microphone_permission_primary_button"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="@font/poppins_bold"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="@string/home_mic_permission_allow"
+        android:textColor="@color/home_text_primary"
+        android:textSize="15sp"
+                android:onClick="@{page::allowMicrophonePermission}" />
+
+    <TextView
+        android:id="@+id/buttonSkipMicPermission"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_microphone_permission_secondary_button"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="@font/poppins_medium"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="@string/home_mic_permission_skip"
+        android:textColor="@color/settings_text_secondary"
+        android:textSize="14sp"
+                android:onClick="@{page::skipMicrophonePermission}" />
+
+    <TextView
+        android:id="@+id/buttonMicPermissionDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="4dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="@font/poppins_medium"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:text="@string/home_mic_permission_details"
+        android:textColor="@color/settings_accent_gold"
+        android:textSize="12sp"
+                android:onClick="@{page::toggleMicrophonePermissionDetails}" />
+
+    <TextView
+        android:id="@+id/micPermissionDetailsText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/bg_microphone_permission_chip"
+        android:fontFamily="@font/poppins_medium"
+        android:lineSpacingExtra="3dp"
+        android:padding="12dp"
+        android:text="@string/home_mic_permission_detail_text"
+        android:textColor="@color/settings_text_secondary"
+        android:textSize="12sp"
+        android:visibility="gone" />
+</LinearLayout>
+</layout>

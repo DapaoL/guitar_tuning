@@ -18,8 +18,8 @@
                 android:height="260dp" />
             <gradient
                 android:angle="45"
-                android:endColor="#005DA8FF"
-                android:startColor="#665DA8FF" />
+                android:endColor="#00F2B84B"
+                android:startColor="#55F2B84B" />
         </shape>
     </item>
 
@@ -32,8 +32,8 @@
                 android:height="280dp" />
             <gradient
                 android:angle="45"
-                android:endColor="#007FE7FF"
-                android:startColor="#447FE7FF" />
+                android:endColor="#00A65F2B"
+                android:startColor="#33A65F2B" />
         </shape>
     </item>
 </layer-list>

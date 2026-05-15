@@ -35,9 +35,7 @@ class SettingsFragment : BaseVmFragment<FragmentSettingsBinding, SettingsViewMod
      * 初始化页面交互。
      */
     private fun initView() {
-        binding.buttonBack.setOnClickListener {
-            (parentFragment as? SettingsNavigationHost)?.goBackFromSettingsChild()
-        }
+        binding.page = this
 
         binding.etReferenceA4.doAfterTextChanged { text ->
             val value = text?.toString().orEmpty()
@@ -45,38 +43,57 @@ class SettingsFragment : BaseVmFragment<FragmentSettingsBinding, SettingsViewMod
                 viewModel.onReferenceA4Changed(value)
             }
         }
-
-        binding.btnApplyA4.setOnClickListener {
-            viewModel.saveReferenceA4()
-        }
-
-        binding.groupSensitivity.setOnCheckedChangeListener { _, checkedId ->
-            if (isUpdatingSelectionFromState) {
-                return@setOnCheckedChangeListener
-            }
-            when (checkedId) {
-                R.id.optionSensitivityHigh -> viewModel.selectSensitivity(TuningSensitivity.HIGH)
-                R.id.optionSensitivityMedium -> viewModel.selectSensitivity(TuningSensitivity.MEDIUM)
-                R.id.optionSensitivityLow -> viewModel.selectSensitivity(TuningSensitivity.LOW)
-            }
-        }
-
-        binding.groupDisplayMode.setOnCheckedChangeListener { _, checkedId ->
-            if (isUpdatingSelectionFromState) {
-                return@setOnCheckedChangeListener
-            }
-
-            when (checkedId) {
-                R.id.optionDisplayGauge -> viewModel.selectDisplayMode(TunerDisplayMode.GAUGE)
-                R.id.optionDisplayPointer -> viewModel.selectDisplayMode(TunerDisplayMode.POINTER)
-                R.id.optionDisplayNumeric -> viewModel.selectDisplayMode(TunerDisplayMode.NUMERIC)
-            }
-        }
     }
 
     /**
      * 绑定 ViewModel 观察者。
      */
+    fun goBack(@Suppress("UNUSED_PARAMETER") view: View) {
+        (parentFragment as? SettingsNavigationHost)?.goBackFromSettingsChild()
+    }
+
+    fun applyReferenceA4(@Suppress("UNUSED_PARAMETER") view: View) {
+        viewModel.saveReferenceA4()
+    }
+
+    fun selectHighSensitivity(@Suppress("UNUSED_PARAMETER") view: View) {
+        selectSensitivity(TuningSensitivity.HIGH)
+    }
+
+    fun selectMediumSensitivity(@Suppress("UNUSED_PARAMETER") view: View) {
+        selectSensitivity(TuningSensitivity.MEDIUM)
+    }
+
+    fun selectLowSensitivity(@Suppress("UNUSED_PARAMETER") view: View) {
+        selectSensitivity(TuningSensitivity.LOW)
+    }
+
+    fun selectGaugeDisplay(@Suppress("UNUSED_PARAMETER") view: View) {
+        selectDisplayMode(TunerDisplayMode.GAUGE)
+    }
+
+    fun selectPointerDisplay(@Suppress("UNUSED_PARAMETER") view: View) {
+        selectDisplayMode(TunerDisplayMode.POINTER)
+    }
+
+    fun selectNumericDisplay(@Suppress("UNUSED_PARAMETER") view: View) {
+        selectDisplayMode(TunerDisplayMode.NUMERIC)
+    }
+
+    private fun selectSensitivity(sensitivity: TuningSensitivity) {
+        if (isUpdatingSelectionFromState) {
+            return
+        }
+        viewModel.selectSensitivity(sensitivity)
+    }
+
+    private fun selectDisplayMode(displayMode: TunerDisplayMode) {
+        if (isUpdatingSelectionFromState) {
+            return
+        }
+        viewModel.selectDisplayMode(displayMode)
+    }
+
     private fun bindObservers() {
         viewModel.referenceA4Input.observe(viewLifecycleOwner) { input ->
             val current = binding.etReferenceA4.text?.toString().orEmpty()

@@ -15,27 +15,28 @@ class AboutSettingsFragment : BaseFragment<FragmentAboutSettingsBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.buttonBack.setOnClickListener {
-            (parentFragment as? SettingsNavigationHost)?.goBackFromSettingsChild()
-        }
-
-        binding.itemPrivacyPolicy.setOnClickListener {
-            openUrl(PRIVACY_POLICY_URL)
-        }
-
-        binding.itemUserAgreement.setOnClickListener {
-            openUrl(USER_AGREEMENT_URL)
-        }
-
-        binding.itemPermissions.setOnClickListener {
-            (parentFragment as? SettingsNavigationHost)?.openSection(SettingsSection.PERMISSIONS)
-        }
+        binding.page = this
 
         binding.versionValue.text = getString(
             R.string.about_settings_version_format,
             BuildConfig.VERSION_NAME
         )
+    }
+
+    fun goBack(@Suppress("UNUSED_PARAMETER") view: View) {
+        (parentFragment as? SettingsNavigationHost)?.goBackFromSettingsChild()
+    }
+
+    fun openPrivacyPolicy(@Suppress("UNUSED_PARAMETER") view: View) {
+        openUrl(PRIVACY_POLICY_URL)
+    }
+
+    fun openUserAgreement(@Suppress("UNUSED_PARAMETER") view: View) {
+        openUrl(USER_AGREEMENT_URL)
+    }
+
+    fun openPermissions(@Suppress("UNUSED_PARAMETER") view: View) {
+        (parentFragment as? SettingsNavigationHost)?.openSection(SettingsSection.PERMISSIONS)
     }
 
     private fun openUrl(url: String) {
@@ -51,7 +52,7 @@ class AboutSettingsFragment : BaseFragment<FragmentAboutSettingsBinding>() {
     }
 
     companion object {
-        const val PRIVACY_POLICY_URL = "https://example.com/privacy-policy"
-        const val USER_AGREEMENT_URL = "https://example.com/user-agreement"
+        const val PRIVACY_POLICY_URL = "https://www.reedl.cn"
+        const val USER_AGREEMENT_URL = "https://reedl.cn"
     }
 }

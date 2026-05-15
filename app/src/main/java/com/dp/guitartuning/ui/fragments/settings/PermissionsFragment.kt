@@ -10,8 +10,10 @@ class PermissionsFragment : BaseFragment<FragmentPermissionsBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.buttonBack.setOnClickListener {
-            (parentFragment as? SettingsNavigationHost)?.goBackFromSettingsChild()
-        }
+        binding.page = this
+    }
+
+    fun goBack(@Suppress("UNUSED_PARAMETER") view: View) {
+        (parentFragment as? SettingsNavigationHost)?.goBackFromSettingsChild()
     }
 }

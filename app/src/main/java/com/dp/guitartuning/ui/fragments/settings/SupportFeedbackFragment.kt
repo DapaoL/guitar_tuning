@@ -14,22 +14,23 @@ class SupportFeedbackFragment : BaseFragment<FragmentSupportFeedbackBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.page = this
+    }
 
-        binding.buttonBack.setOnClickListener {
-            (parentFragment as? SettingsNavigationHost)?.goBackFromSettingsChild()
-        }
+    fun goBack(@Suppress("UNUSED_PARAMETER") view: View) {
+        (parentFragment as? SettingsNavigationHost)?.goBackFromSettingsChild()
+    }
 
-        binding.itemEmail.setOnClickListener {
-            copyEmailToClipboard()
-        }
+    fun copyEmail(@Suppress("UNUSED_PARAMETER") view: View) {
+        copyEmailToClipboard()
+    }
 
-        binding.itemRate.setOnClickListener {
-            Toast.makeText(requireContext(), R.string.support_feedback_rate_placeholder, Toast.LENGTH_SHORT).show()
-        }
+    fun showRatePlaceholder(@Suppress("UNUSED_PARAMETER") view: View) {
+        Toast.makeText(requireContext(), R.string.support_feedback_rate_placeholder, Toast.LENGTH_SHORT).show()
+    }
 
-        binding.itemShare.setOnClickListener {
-            Toast.makeText(requireContext(), R.string.support_feedback_share_placeholder, Toast.LENGTH_SHORT).show()
-        }
+    fun showSharePlaceholder(@Suppress("UNUSED_PARAMETER") view: View) {
+        Toast.makeText(requireContext(), R.string.support_feedback_share_placeholder, Toast.LENGTH_SHORT).show()
     }
 
     private fun copyEmailToClipboard() {

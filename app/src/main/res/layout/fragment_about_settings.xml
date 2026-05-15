@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="page"
+            type="com.dp.guitartuning.ui.fragments.settings.AboutSettingsFragment" />
+    </data>
+
+<FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -31,6 +40,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
+                android:onClick="@{page::openPrivacyPolicy}"
                 android:orientation="vertical"
                 android:padding="18dp">
 
@@ -69,6 +79,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
+                android:onClick="@{page::openUserAgreement}"
                 android:orientation="vertical"
                 android:padding="18dp">
 
@@ -107,6 +118,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
+                android:onClick="@{page::openPermissions}"
                 android:orientation="vertical"
                 android:padding="18dp">
 
@@ -175,7 +187,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:background="@color/settings_bg_top">
+        android:background="@drawable/bg_settings_screen">
 
         <TextView
             android:id="@+id/aboutTitle"
@@ -207,6 +219,7 @@
             android:background="@drawable/bg_settings_back_button"
             android:clickable="true"
             android:focusable="true"
+            android:onClick="@{page::goBack}"
             android:paddingStart="14dp"
             android:paddingTop="8dp"
             android:paddingEnd="14dp"
@@ -219,3 +232,4 @@
             app:layout_constraintTop_toTopOf="@+id/aboutTitle" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
+</layout>

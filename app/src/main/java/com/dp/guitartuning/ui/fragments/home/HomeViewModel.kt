@@ -4,13 +4,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.dp.guitartuning.common.data.preferences.Preferences
 import com.dp.guitartuning.domain.model.TunerSettings
-import com.dp.guitartuning.domain.repository.ExampleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val exampleRepository: ExampleRepository,
     private val preferences: Preferences
 ) : ViewModel() {
 

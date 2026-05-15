@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="page"
+            type="com.dp.guitartuning.ui.fragments.settings.GeneralSettingsFragment" />
+    </data>
+
+<FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -22,7 +31,7 @@
                 android:layout_marginTop="50dp"
                 android:paddingBottom="110dp">
 
-                <!-- 涓婚璁剧疆 -->
+                <!-- 娑撳顣界拋鍓х枂 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -65,7 +74,8 @@
                             android:focusable="true"
                             android:minHeight="150dp"
                             android:orientation="vertical"
-                            android:padding="12dp">
+                            android:padding="12dp"
+                android:onClick="@{page::selectLightTheme}">
 
                             <FrameLayout
                                 android:layout_width="match_parent"
@@ -141,7 +151,8 @@
                             android:focusable="true"
                             android:minHeight="150dp"
                             android:orientation="vertical"
-                            android:padding="12dp">
+                            android:padding="12dp"
+                android:onClick="@{page::selectDarkTheme}">
 
                             <FrameLayout
                                 android:layout_width="match_parent"
@@ -208,7 +219,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- 灞忓箷璁剧疆 -->
+                <!-- 鐏炲繐绠风拋鍓х枂 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -245,10 +256,11 @@
                         android:id="@+id/switchKeepScreenOn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp" />
+                        android:layout_marginStart="16dp"
+                android:onClick="@{page::toggleKeepScreenOn}" />
                 </LinearLayout>
 
-                <!-- 闊抽璁剧疆 -->
+                <!-- 闂婃娊顣剁拋鍓х枂 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -285,7 +297,8 @@
                         android:id="@+id/switchVolumeBoost"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp" />
+                        android:layout_marginStart="16dp"
+                android:onClick="@{page::toggleVolumeBoost}" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -296,7 +309,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
-            android:background="@color/settings_bg_top">
+            android:background="@drawable/bg_settings_screen">
 
             <TextView
                 android:id="@+id/textViewTitle"
@@ -337,9 +350,10 @@
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewTitle"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textViewTitle" />
+                app:layout_constraintTop_toTopOf="@+id/textViewTitle"
+                android:onClick="@{page::goBack}" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>
-
+</layout>

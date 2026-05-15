@@ -22,23 +22,37 @@ class SettingsHomeFragment : BaseVmFragment<FragmentSettingsHomeBinding, Setting
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val host = parentFragment as? SettingsNavigationHost ?: return
+        binding.page = this
         bindState()
-
-        listOf(
-            binding.itemTuner to SettingsSection.TUNER,
-            binding.itemMetronome to SettingsSection.METRONOME,
-            binding.itemGeneral to SettingsSection.GENERAL,
-            binding.itemSupport to SettingsSection.SUPPORT,
-            binding.itemAbout to SettingsSection.ABOUT
-        ).forEach { (itemView, section) ->
-            itemView.setOnClickListener { host.openSection(section) }
-        }
     }
 
     /**
      * 在界面恢复可见时刷新当前设置。
      */
+    fun openTunerSettings(@Suppress("UNUSED_PARAMETER") view: View) {
+        openSection(SettingsSection.TUNER)
+    }
+
+    fun openMetronomeSettings(@Suppress("UNUSED_PARAMETER") view: View) {
+        openSection(SettingsSection.METRONOME)
+    }
+
+    fun openGeneralSettings(@Suppress("UNUSED_PARAMETER") view: View) {
+        openSection(SettingsSection.GENERAL)
+    }
+
+    fun openSupportSettings(@Suppress("UNUSED_PARAMETER") view: View) {
+        openSection(SettingsSection.SUPPORT)
+    }
+
+    fun openAboutSettings(@Suppress("UNUSED_PARAMETER") view: View) {
+        openSection(SettingsSection.ABOUT)
+    }
+
+    private fun openSection(section: SettingsSection) {
+        (parentFragment as? SettingsNavigationHost)?.openSection(section)
+    }
+
     override fun onResume() {
         super.onResume()
         viewModel.loadSettings()

@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="page"
+            type="com.dp.guitartuning.ui.fragments.settings.MetronomeSettingsFragment" />
+    </data>
+
+<FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -92,7 +101,8 @@
                             android:layout_height="wrap_content"
                             android:buttonTint="@color/settings_accent_gold"
                             android:text="@string/metronome_sound_type_wood_block"
-                            android:textColor="@color/settings_text_primary" />
+                            android:textColor="@color/settings_text_primary"
+                android:onClick="@{page::selectWoodBlockSound}" />
 
                         <RadioButton
                             android:id="@+id/optionSoundClick"
@@ -100,7 +110,8 @@
                             android:layout_height="wrap_content"
                             android:buttonTint="@color/settings_accent_gold"
                             android:text="@string/metronome_sound_type_click"
-                            android:textColor="@color/settings_text_primary" />
+                            android:textColor="@color/settings_text_primary"
+                android:onClick="@{page::selectClickSound}" />
 
                         <RadioButton
                             android:id="@+id/optionSoundDrum"
@@ -108,7 +119,8 @@
                             android:layout_height="wrap_content"
                             android:buttonTint="@color/settings_accent_gold"
                             android:text="@string/metronome_sound_type_drum"
-                            android:textColor="@color/settings_text_primary" />
+                            android:textColor="@color/settings_text_primary"
+                android:onClick="@{page::selectDrumSound}" />
 
                         <RadioButton
                             android:id="@+id/optionSoundBeep"
@@ -116,7 +128,8 @@
                             android:layout_height="wrap_content"
                             android:buttonTint="@color/settings_accent_gold"
                             android:text="@string/metronome_sound_type_beep"
-                            android:textColor="@color/settings_text_primary" />
+                            android:textColor="@color/settings_text_primary"
+                android:onClick="@{page::selectBeepSound}" />
                     </RadioGroup>
                 </LinearLayout>
 
@@ -156,7 +169,8 @@
                         android:id="@+id/switchAccentEnabled"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp" />
+                        android:layout_marginStart="16dp"
+                android:onClick="@{page::toggleAccent}" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -200,7 +214,8 @@
                             android:id="@+id/switchVibrationEnabled"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp" />
+                            android:layout_marginStart="16dp"
+                android:onClick="@{page::toggleVibration}" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -230,7 +245,8 @@
                                 android:id="@+id/switchAccentVibration"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="16dp" />
+                                android:layout_marginStart="16dp"
+                android:onClick="@{page::toggleAccentVibration}" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -253,7 +269,8 @@
                                 android:id="@+id/switchRegularVibration"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="16dp" />
+                                android:layout_marginStart="16dp"
+                android:onClick="@{page::toggleRegularVibration}" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -265,7 +282,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
-            android:background="@color/settings_bg_top">
+            android:background="@drawable/bg_settings_screen">
 
             <TextView
                 android:id="@+id/textView"
@@ -306,9 +323,11 @@
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="@+id/textView"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textView" />
+                app:layout_constraintTop_toTopOf="@+id/textView"
+                android:onClick="@{page::goBack}" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>
+</layout>

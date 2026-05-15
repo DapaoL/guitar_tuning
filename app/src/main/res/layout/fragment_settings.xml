@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="page"
+            type="com.dp.guitartuning.ui.fragments.settings.SettingsFragment" />
+    </data>
+
+<FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bg_settings_screen"
@@ -94,7 +103,8 @@
                         android:text="@string/settings_reference_a4_apply"
                         android:textAllCaps="false"
                         android:textColor="@color/settings_bg_top"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                android:onClick="@{page::applyReferenceA4}" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -125,7 +135,8 @@
                             android:layout_height="wrap_content"
                             android:buttonTint="@color/settings_accent_gold"
                             android:text="@string/settings_sensitivity_high"
-                            android:textColor="@color/settings_text_primary" />
+                            android:textColor="@color/settings_text_primary"
+                android:onClick="@{page::selectHighSensitivity}" />
 
                         <RadioButton
                             android:id="@+id/optionSensitivityMedium"
@@ -133,7 +144,8 @@
                             android:layout_height="wrap_content"
                             android:buttonTint="@color/settings_accent_gold"
                             android:text="@string/settings_sensitivity_medium"
-                            android:textColor="@color/settings_text_primary" />
+                            android:textColor="@color/settings_text_primary"
+                android:onClick="@{page::selectMediumSensitivity}" />
 
                         <RadioButton
                             android:id="@+id/optionSensitivityLow"
@@ -141,7 +153,8 @@
                             android:layout_height="wrap_content"
                             android:buttonTint="@color/settings_accent_gold"
                             android:text="@string/settings_sensitivity_low"
-                            android:textColor="@color/settings_text_primary" />
+                            android:textColor="@color/settings_text_primary"
+                android:onClick="@{page::selectLowSensitivity}" />
                     </RadioGroup>
                 </LinearLayout>
 
@@ -173,7 +186,8 @@
                             android:layout_height="wrap_content"
                             android:buttonTint="@color/settings_accent_gold"
                             android:text="@string/settings_display_mode_gauge"
-                            android:textColor="@color/settings_text_primary" />
+                            android:textColor="@color/settings_text_primary"
+                android:onClick="@{page::selectGaugeDisplay}" />
 
                         <RadioButton
                             android:id="@+id/optionDisplayPointer"
@@ -181,7 +195,8 @@
                             android:layout_height="wrap_content"
                             android:buttonTint="@color/settings_accent_gold"
                             android:text="@string/settings_display_mode_pointer"
-                            android:textColor="@color/settings_text_primary" />
+                            android:textColor="@color/settings_text_primary"
+                android:onClick="@{page::selectPointerDisplay}" />
 
                         <RadioButton
                             android:id="@+id/optionDisplayNumeric"
@@ -189,7 +204,8 @@
                             android:layout_height="wrap_content"
                             android:buttonTint="@color/settings_accent_gold"
                             android:text="@string/settings_display_mode_numeric"
-                            android:textColor="@color/settings_text_primary" />
+                            android:textColor="@color/settings_text_primary"
+                android:onClick="@{page::selectNumericDisplay}" />
                     </RadioGroup>
                 </LinearLayout>
             </LinearLayout>
@@ -199,7 +215,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
-            android:background="@color/settings_bg_top">
+            android:background="@drawable/bg_settings_screen">
 
             <TextView
                 android:id="@+id/textView"
@@ -241,10 +257,12 @@
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="@+id/textView"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textView" />
+                app:layout_constraintTop_toTopOf="@+id/textView"
+                android:onClick="@{page::goBack}" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </FrameLayout>
+</layout>

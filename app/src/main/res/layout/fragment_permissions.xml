@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="page"
+            type="com.dp.guitartuning.ui.fragments.settings.PermissionsFragment" />
+    </data>
+
+<FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -134,12 +143,12 @@
 
     </ScrollView>
 
-    <!-- 顶部浮动标题栏 -->
+    <!-- 椤堕儴娴姩鏍囬鏍?-->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:background="@color/settings_bg_top">
+        android:background="@drawable/bg_settings_screen">
 
         <TextView
             android:id="@+id/permissionsTitle"
@@ -180,8 +189,10 @@
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/permissionsTitle"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/permissionsTitle" />
+            app:layout_constraintTop_toTopOf="@+id/permissionsTitle"
+                android:onClick="@{page::goBack}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
+</layout>

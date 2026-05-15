@@ -16,7 +16,7 @@
     <string name="home_status_helper">左侧表示偏低，右侧表示偏高，指针停在中间表示音准。</string>
     <string name="home_string_suffix">弦</string>
     <string name="home_string_hint">点击选择</string>
-    <string name="home_auto_detect_toggle">自动识别</string>
+    <string name="home_auto_detect_toggle">自动</string>
     <string name="home_auto_detect_summary_on">已开启自动识别：会根据当前音高自动切换目标弦。</string>
     <string name="home_auto_detect_summary_off">手动模式：点击琴弦旋钮选择目标弦。</string>
     <string name="home_pitch_status_waiting">音准：等待检测</string>
@@ -24,11 +24,22 @@
     <string name="home_pitch_status_in_tune">音准</string>
     <string name="home_pitch_status_flat">偏低</string>
     <string name="home_pitch_status_sharp">偏高</string>
-    <string name="home_mic_permission_title">开启麦克风权限</string>
-    <string name="home_mic_permission_message">调音功能需要麦克风权限，是否现在开启？</string>
+    <string name="home_mic_permission_title">开启麦克风，开始精准调音</string>
+    <string name="home_mic_permission_message">App 只会在调音时聆听吉他声音，用来识别音高，不会保存或上传录音。</string>
+    <string name="home_mic_permission_icon_description">麦克风权限图标</string>
+    <string name="home_mic_permission_chip_tuning_only">仅调音时使用</string>
+    <string name="home_mic_permission_chip_no_recording">不保存录音</string>
+    <string name="home_mic_permission_chip_can_close">可随时关闭</string>
+    <string name="home_mic_permission_allow">允许麦克风权限</string>
+    <string name="home_mic_permission_skip">暂不使用</string>
+    <string name="home_mic_permission_details">为什么需要麦克风？</string>
+    <string name="home_mic_permission_detail_text">调音器需要通过麦克风实时接收琴弦声音，并计算当前音高与标准音之间的偏差。采集只发生在调音页面运行时，离开页面会停止监听。</string>
     <string name="home_dialog_confirm">开启</string>
     <string name="home_dialog_cancel">暂不</string>
     <string name="home_mic_permission_granted">麦克风权限已获取</string>
+    <string name="home_mic_permission_required">需要获取权限才能使用</string>
+    <string name="home_mic_permission_inline_action">获取权限</string>
+    <string name="home_mic_permission_inline_prompt">需要获取权限才能使用 %1$s</string>
     <string name="home_mic_init_failed">麦克风初始化失败</string>
     <string name="home_mic_init_failed_with_reason">麦克风初始化失败：%1$s</string>
     <string name="home_unknown_error">未知错误</string>
@@ -55,7 +66,7 @@
     <string name="settings_item_support">支持与反馈</string>
     <string name="settings_item_about">关于</string>
     <string name="settings_back">返回</string>
-    <string name="settings_placeholder_message">该模块正在筹备中，后续会接入完整配置与说明。</string>
+
     <string name="settings_title">调音设置</string>
     <string name="settings_reference_a4_title">A4 标准音高</string>
     <string name="settings_reference_a4_summary">输入 430 到 450 Hz 之间的数值并立即应用。</string>

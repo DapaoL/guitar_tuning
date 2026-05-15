@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="page"
+            type="com.dp.guitartuning.ui.fragments.settings.SettingsHomeFragment" />
+    </data>
+
+<ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_settings_screen"
@@ -17,6 +26,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:background="@drawable/bg_settings_hero_panel"
             android:orientation="vertical"
             android:padding="20dp">
@@ -181,7 +191,8 @@
             android:gravity="center_vertical"
             android:minHeight="92dp"
             android:orientation="horizontal"
-            android:padding="18dp">
+            android:padding="18dp"
+                android:onClick="@{page::openTunerSettings}">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -244,7 +255,8 @@
             android:gravity="center_vertical"
             android:minHeight="84dp"
             android:orientation="horizontal"
-            android:padding="18dp">
+            android:padding="18dp"
+                android:onClick="@{page::openMetronomeSettings}">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -314,7 +326,8 @@
             android:gravity="center_vertical"
             android:minHeight="78dp"
             android:orientation="horizontal"
-            android:padding="18dp">
+            android:padding="18dp"
+                android:onClick="@{page::openGeneralSettings}">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -376,7 +389,8 @@
             android:gravity="center_vertical"
             android:minHeight="78dp"
             android:orientation="horizontal"
-            android:padding="18dp">
+            android:padding="18dp"
+                android:onClick="@{page::openSupportSettings}">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -422,7 +436,8 @@
             android:gravity="center_vertical"
             android:minHeight="78dp"
             android:orientation="horizontal"
-            android:padding="18dp">
+            android:padding="18dp"
+                android:onClick="@{page::openAboutSettings}">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -457,3 +472,4 @@
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
+</layout>

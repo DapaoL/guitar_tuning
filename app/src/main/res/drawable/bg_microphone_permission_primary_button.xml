@@ -2,17 +2,17 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
-            <corners android:radius="22dp" />
-            <solid android:color="#A76620" />
+            <corners android:radius="18dp" />
+            <solid android:color="@color/settings_accent_gold" />
         </shape>
     </item>
     <item>
         <shape android:shape="rectangle">
-            <corners android:radius="22dp" />
+            <corners android:radius="18dp" />
             <gradient
-                android:angle="0"
+                android:angle="270"
                 android:endColor="#F2C15B"
-                android:startColor="@color/home_tint_gold" />
+                android:startColor="@color/settings_accent_gold" />
         </shape>
     </item>
 </selector>

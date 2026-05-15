@@ -28,27 +28,7 @@ class MetronomeSettingsFragment :
     }
 
     private fun initView() {
-        binding.buttonBack.setOnClickListener {
-            (parentFragment as? SettingsNavigationHost)?.goBackFromSettingsChild()
-        }
-
-        binding.groupSoundType.setOnCheckedChangeListener { _, checkedId ->
-            if (isUpdatingSelectionFromState) {
-                return@setOnCheckedChangeListener
-            }
-
-            when (checkedId) {
-                R.id.optionSoundWoodBlock -> viewModel.selectSoundType(MetronomeSoundType.WOOD_BLOCK)
-                R.id.optionSoundClick -> viewModel.selectSoundType(MetronomeSoundType.CLICK)
-                R.id.optionSoundDrum -> viewModel.selectSoundType(MetronomeSoundType.DRUM)
-                R.id.optionSoundBeep -> viewModel.selectSoundType(MetronomeSoundType.BEEP)
-            }
-        }
-
-        bindToggle(binding.switchAccentEnabled) { viewModel.setAccentEnabled(it) }
-        bindToggle(binding.switchVibrationEnabled) { viewModel.setVibrationEnabled(it) }
-        bindToggle(binding.switchAccentVibration) { viewModel.setAccentVibrationEnabled(it) }
-        bindToggle(binding.switchRegularVibration) { viewModel.setRegularVibrationEnabled(it) }
+        binding.page = this
     }
 
     private fun bindObservers() {
@@ -93,13 +73,60 @@ class MetronomeSettingsFragment :
         }
     }
 
-    private fun bindToggle(toggle: SwitchCompat, onChanged: (Boolean) -> Unit) {
-        toggle.setOnCheckedChangeListener { _, isChecked ->
-            if (isUpdatingToggleFromState) {
-                return@setOnCheckedChangeListener
-            }
-            onChanged(isChecked)
+
+    fun goBack(@Suppress("UNUSED_PARAMETER") view: View) {
+        (parentFragment as? SettingsNavigationHost)?.goBackFromSettingsChild()
+    }
+
+    fun selectWoodBlockSound(@Suppress("UNUSED_PARAMETER") view: View) {
+        selectSoundType(MetronomeSoundType.WOOD_BLOCK)
+    }
+
+    fun selectClickSound(@Suppress("UNUSED_PARAMETER") view: View) {
+        selectSoundType(MetronomeSoundType.CLICK)
+    }
+
+    fun selectDrumSound(@Suppress("UNUSED_PARAMETER") view: View) {
+        selectSoundType(MetronomeSoundType.DRUM)
+    }
+
+    fun selectBeepSound(@Suppress("UNUSED_PARAMETER") view: View) {
+        selectSoundType(MetronomeSoundType.BEEP)
+    }
+
+    fun toggleAccent(view: View) {
+        if (isUpdatingToggleFromState) {
+            return
         }
+        viewModel.setAccentEnabled((view as SwitchCompat).isChecked)
+    }
+
+    fun toggleVibration(view: View) {
+        if (isUpdatingToggleFromState) {
+            return
+        }
+        viewModel.setVibrationEnabled((view as SwitchCompat).isChecked)
+    }
+
+    fun toggleAccentVibration(view: View) {
+        if (isUpdatingToggleFromState) {
+            return
+        }
+        viewModel.setAccentVibrationEnabled((view as SwitchCompat).isChecked)
+    }
+
+    fun toggleRegularVibration(view: View) {
+        if (isUpdatingToggleFromState) {
+            return
+        }
+        viewModel.setRegularVibrationEnabled((view as SwitchCompat).isChecked)
+    }
+
+    private fun selectSoundType(soundType: MetronomeSoundType) {
+        if (isUpdatingSelectionFromState) {
+            return
+        }
+        viewModel.selectSoundType(soundType)
     }
 
     private fun updateToggle(toggle: SwitchCompat, enabled: Boolean) {
