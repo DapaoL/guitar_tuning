@@ -10,11 +10,18 @@ import android.media.AudioRecord
 import android.media.AudioTrack
 import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import be.tarsos.dsp.AudioDispatcher
 import be.tarsos.dsp.pitch.PitchDetectionHandler
 import be.tarsos.dsp.pitch.PitchProcessor
@@ -36,6 +43,7 @@ import com.dp.guitartuning.util.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
@@ -52,6 +60,7 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
     private var microphonePermissionDialog: AlertDialog? = null
     private var pendingMicPermissionGrantedToast = false
     private var pendingMicPermissionStartTuner = false
+    private var instrumentDropdownWindow: PopupWindow? = null
     private val tonePreviewPlayer = TonePreviewPlayer()
     private val pitchPointerUpdateScheduler = PitchPointerUpdateScheduler { centDiff ->
         updatePitchPointer(centDiff)
@@ -93,6 +102,7 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
      * 在界面进入后台前停止监听与试音播放，并清除常亮标记。
      */
     override fun onPause() {
+        dismissInstrumentDropdown()
         stopTuner()
         tonePreviewPlayer.stop()
         activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -123,6 +133,7 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
             refreshInstrumentUI(config)
         }
 
+        setInstrumentDropdownExpanded(false)
         updateSelectedString(viewModel.selectedIndex.value ?: 4)
         updateAutoDetectSummary(viewModel.autoDetectEnabled.value == true)
         hidePermissionTip()
@@ -621,19 +632,138 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     /**
-     * 乐器选择：弹出三种乐器选择对话框。
+     * 乐器选择：在乐器名称旁弹出下拉菜单。
      */
     fun instrumentSelection(@Suppress("UNUSED_PARAMETER") view: View) {
-        val instruments = InstrumentConfig.ALL
-        val names = instruments.map { getString(it.displayNameRes) }.toTypedArray()
-        AlertDialog.Builder(requireContext())
-            .setTitle(getString(R.string.home_instrument_select_title))
-            .setItems(names) { _, which ->
-                val selected = instruments.getOrNull(which) ?: return@setItems
-                viewModel.switchInstrument(selected.instrumentType)
+        if (instrumentDropdownWindow?.isShowing == true) {
+            dismissInstrumentDropdown()
+            return
+        }
+
+        val anchor = binding.tvInstrumentName
+        val contentView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.popup_instrument_dropdown, null)
+        val popup = PopupWindow(
+            contentView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        )
+        instrumentDropdownWindow = popup
+        popup.isOutsideTouchable = true
+        popup.elevation = dpToPx(12).toFloat()
+        popup.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popup.setOnDismissListener {
+            if (instrumentDropdownWindow === popup) {
+                instrumentDropdownWindow = null
+            }
+            setInstrumentDropdownExpanded(false)
+        }
+
+        bindInstrumentDropdownOptions(contentView, popup)
+
+        val minWidth = max(anchor.width + dpToPx(28), dpToPx(160))
+        contentView.minimumWidth = minWidth
+        contentView.measure(
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        )
+
+        val popupWidth = max(contentView.measuredWidth, minWidth)
+        val xOffset = anchor.width - popupWidth
+
+        setInstrumentDropdownExpanded(true)
+        popup.width = popupWidth
+        popup.showAsDropDown(anchor, xOffset, dpToPx(8))
+        contentView.alpha = 0f
+        contentView.translationY = -dpToPx(8).toFloat()
+        contentView.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .setDuration(160L)
+            .start()
+    }
+
+    private fun bindInstrumentDropdownOptions(contentView: View, popup: PopupWindow) {
+        bindInstrumentOption(
+            contentView = contentView,
+            containerId = R.id.instrument_option_guitar,
+            labelId = R.id.instrument_option_guitar_text,
+            checkId = R.id.instrument_option_guitar_check,
+            config = InstrumentConfig.GUITAR,
+            popup = popup
+        )
+        bindInstrumentOption(
+            contentView = contentView,
+            containerId = R.id.instrument_option_bass,
+            labelId = R.id.instrument_option_bass_text,
+            checkId = R.id.instrument_option_bass_check,
+            config = InstrumentConfig.BASS,
+            popup = popup
+        )
+        bindInstrumentOption(
+            contentView = contentView,
+            containerId = R.id.instrument_option_ukulele,
+            labelId = R.id.instrument_option_ukulele_text,
+            checkId = R.id.instrument_option_ukulele_check,
+            config = InstrumentConfig.UKULELE,
+            popup = popup
+        )
+    }
+
+    private fun bindInstrumentOption(
+        contentView: View,
+        containerId: Int,
+        labelId: Int,
+        checkId: Int,
+        config: InstrumentConfig,
+        popup: PopupWindow
+    ) {
+        val container = contentView.findViewById<LinearLayout>(containerId)
+        val label = contentView.findViewById<TextView>(labelId)
+        val check = contentView.findViewById<ImageView>(checkId)
+        val selectedInstrument = viewModel.currentInstrument.value?.instrumentType
+        val isSelected = selectedInstrument == config.instrumentType
+
+        container.isSelected = isSelected
+        label.text = getString(config.displayNameRes)
+        label.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                if (isSelected) R.color.home_text_primary else R.color.home_text_secondary
+            )
+        )
+        check.visibility = if (isSelected) View.VISIBLE else View.INVISIBLE
+
+        container.setOnClickListener {
+            if (!isSelected) {
+                viewModel.switchInstrument(config.instrumentType)
                 updateSelectedString(viewModel.selectedIndex.value ?: 0)
             }
-            .show()
+            popup.dismiss()
+        }
+    }
+
+    private fun setInstrumentDropdownExpanded(expanded: Boolean) {
+        val arrowDrawable = AppCompatResources.getDrawable(
+            requireContext(),
+            if (expanded) R.drawable.ic_home_dropdown_arrow_up else R.drawable.right_arrow
+        )
+        binding.tvInstrumentName.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            null,
+            null,
+            arrowDrawable,
+            null
+        )
+    }
+
+    private fun dismissInstrumentDropdown() {
+        instrumentDropdownWindow?.dismiss()
+        instrumentDropdownWindow = null
+    }
+
+    private fun dpToPx(value: Int): Int {
+        return (value * resources.displayMetrics.density).roundToInt()
     }
 
     /**
@@ -683,6 +813,7 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
      * 在视图销毁时释放首页相关资源。
      */
     override fun onDestroyView() {
+        dismissInstrumentDropdown()
         pitchPointerUpdateScheduler.clear()
         stopTuner()
         tonePreviewPlayer.stop()

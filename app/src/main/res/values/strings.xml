@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">吉他调音器</string>
+    <string name="app_name">调音器Tuna</string>
 
     <string name="home_guitar">吉他</string>
     <string name="home_bass">贝斯</string>
@@ -149,7 +149,7 @@
     <string name="support_feedback_subtitle">遇到问题或有建议？随时联系我们</string>
     <string name="support_feedback_email_title">联系邮箱</string>
     <string name="support_feedback_email_summary">点击复制邮箱地址到剪贴板</string>
-    <string name="support_feedback_email_value">reedllll.163.com</string>
+    <string name="support_feedback_email_value">reedllll@163.com</string>
     <string name="support_feedback_rate_title">应用评分</string>
     <string name="support_feedback_rate_summary">前往应用市场为我们评分</string>
     <string name="support_feedback_share_title">分享 App</string>
