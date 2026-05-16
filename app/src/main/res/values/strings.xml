@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">吉他调音器</string>
 
+    <string name="home_guitar">吉他</string>
+    <string name="home_bass">贝斯</string>
+    <string name="home_ukulele">尤克里里</string>
+    <string name="home_instrument_select_title">选择乐器</string>
+
+
     <string name="home_title">调音器</string>
     <string name="home_hero_badge">实时监听模式</string>
     <string name="home_hero_title">吉他调音器</string>
@@ -21,7 +27,7 @@
     <string name="home_auto_detect_summary_off">手动模式：点击琴弦旋钮选择目标弦。</string>
     <string name="home_pitch_status_waiting">音准：等待检测</string>
     <string name="home_pitch_status_format">音准：%1$s</string>
-    <string name="home_pitch_status_in_tune">音准</string>
+    <string name="home_pitch_status_in_tune">刚好</string>
     <string name="home_pitch_status_flat">偏低</string>
     <string name="home_pitch_status_sharp">偏高</string>
     <string name="home_mic_permission_title">开启麦克风，开始精准调音</string>

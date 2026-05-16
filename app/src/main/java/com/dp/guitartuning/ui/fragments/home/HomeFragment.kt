@@ -21,13 +21,15 @@ import be.tarsos.dsp.pitch.PitchProcessor
 import com.dp.guitartuning.R
 import com.dp.guitartuning.databinding.DialogMicrophonePermissionBinding
 import com.dp.guitartuning.databinding.FragmentHomeBinding
+import com.dp.guitartuning.domain.model.InstrumentConfig
+import com.dp.guitartuning.domain.model.InstrumentString
+import com.dp.guitartuning.domain.model.InstrumentType
 import com.dp.guitartuning.domain.model.TunerDisplayMode
 import com.dp.guitartuning.domain.model.TunerSettings
 import com.dp.guitartuning.domain.model.TuningSensitivity
 import com.dp.guitartuning.ui.activitys.MainActivity
 import com.dp.guitartuning.ui.base.BaseVmFragment
 import com.dp.guitartuning.util.AudioRecordTarsosInputStream
-import com.dp.guitartuning.util.GuitarTone
 import com.dp.guitartuning.util.MicrophonePermissionHelper
 import com.dp.guitartuning.util.TunerMath
 import com.dp.guitartuning.util.toast
@@ -117,6 +119,10 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
             updateAutoDetectSummary(isEnabled)
         }
 
+        viewModel.currentInstrument.observe(viewLifecycleOwner) { config ->
+            refreshInstrumentUI(config)
+        }
+
         updateSelectedString(viewModel.selectedIndex.value ?: 4)
         updateAutoDetectSummary(viewModel.autoDetectEnabled.value == true)
         hidePermissionTip()
@@ -167,7 +173,12 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
      * 更新当前选中的琴弦。
      */
     private fun updateSelectedString(selectedIndex: Int) {
-        val selectedString = GuitarTone.standardStringAt(selectedIndex, currentSettings().referenceA4Hz) ?: return
+        val referenceA4 = currentSettings().referenceA4Hz
+        val strings = viewModel.currentStrings(referenceA4)
+        val selectedString = strings.getOrNull(selectedIndex)
+            ?: strings.getOrNull(viewModel.currentTuningPreset.value?.defaultStringIndex ?: 0)
+            ?: strings.firstOrNull()
+            ?: return
         viewModel.selectedIndex.value = selectedString.index
         viewModel.name.value = selectedString.number
         viewModel.selectedLabel.value = selectedString.label
@@ -175,10 +186,10 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     /**
-     * 刷新旋钮选中状态。
+     * 刷新旋钮选中状态（仅操作当前可见容器的旋钮）。
      */
     private fun updateKnobSelection(selectedIndex: Int) {
-        getStringKnobs().forEachIndexed { index, knob ->
+        activeKnobs().forEachIndexed { index, knob ->
             knob.isSelected = index == selectedIndex
         }
     }
@@ -188,7 +199,7 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
      */
     private fun updateKnobInteractivity(autoDetectEnabled: Boolean) {
         val alpha = if (autoDetectEnabled) 0.55f else 1f
-        getStringKnobs().forEach { knob ->
+        activeKnobs().forEach { knob ->
             knob.isEnabled = !autoDetectEnabled
             knob.alpha = alpha
         }
@@ -207,12 +218,40 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     /**
-     * 获取当前选中的标准弦信息。
+     * 根据当前乐器配置刷新 UI：乐器名称、图片、弦按钮布局。
+     * 6 弦乐器使用左右两列旋钮，4 弦乐器切换到居中 2x2 布局。
      */
-    private fun getSelectedString(): GuitarTone.GuitarString {
-        val referenceA4 = currentSettings().referenceA4Hz
-        return GuitarTone.standardStringAt(viewModel.selectedIndex.value ?: 4, referenceA4)
-            ?: GuitarTone.standardStrings(referenceA4)[4]
+    private fun refreshInstrumentUI(config: InstrumentConfig) {
+        binding.tvInstrumentName.setText(config.displayNameRes)
+
+        try {
+            binding.guitarHeadstock.setBackgroundResource(config.imageRes)
+        } catch (_: Exception) {
+            binding.guitarHeadstock.setBackgroundResource(R.drawable.guitar_ic)
+        }
+
+        val preset = config.standardTuning
+        val is4String = preset.strings.size <= 4
+
+        binding.knobContainer6str.visibility = if (is4String) View.GONE else View.VISIBLE
+        binding.knobContainer4str.visibility = if (is4String) View.VISIBLE else View.GONE
+
+        val knobs = if (is4String) get4StringKnobs() else get6StringKnobs()
+        val labels = if (is4String) get4StringKnobLabels() else get6StringKnobLabels()
+        preset.strings.forEachIndexed { i, string ->
+            knobs.getOrNull(i)?.let { knob ->
+                knob.text = string.number
+                knob.tag = string.index.toString()
+            }
+            labels.getOrNull(i)?.text = string.label
+        }
+    }
+
+    /**
+     * 获取当前选中的弦信息。
+     */
+    private fun getSelectedString(): InstrumentString {
+        return viewModel.currentSelectedString(currentSettings().referenceA4Hz)
     }
 
     /**
@@ -264,17 +303,43 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     /**
-     * 获取六个弦钮控件。
+     * 获取六个弦钮控件（6 弦容器）。
      */
-    private fun getStringKnobs(): List<TextView> {
-        return listOf(
-            binding.knob1,
-            binding.knob2,
-            binding.knob3,
-            binding.knob4,
-            binding.knob5,
-            binding.knob6
-        )
+    private fun get6StringKnobs(): List<TextView> = listOf(
+        binding.knob1, binding.knob2, binding.knob3,
+        binding.knob4, binding.knob5, binding.knob6
+    )
+
+    /**
+     * 获取 6 弦容器的音名标签控件。
+     */
+    private fun get6StringKnobLabels(): List<TextView> = listOf(
+        binding.knobLabel1, binding.knobLabel2, binding.knobLabel3,
+        binding.knobLabel4, binding.knobLabel5, binding.knobLabel6
+    )
+
+    /**
+     * 获取 4 弦 2x2 旋钮控件。
+     */
+    private fun get4StringKnobs(): List<TextView> = listOf(
+        binding.knob4s1, binding.knob4s2,
+        binding.knob4s3, binding.knob4s4
+    )
+
+    /**
+     * 获取 4 弦 2x2 的音名标签控件。
+     */
+    private fun get4StringKnobLabels(): List<TextView> = listOf(
+        binding.knobLabel4s1, binding.knobLabel4s2,
+        binding.knobLabel4s3, binding.knobLabel4s4
+    )
+
+    /**
+     * 返回当前可见容器的旋钮列表（用于选中状态和可交互性更新）。
+     */
+    private fun activeKnobs(): List<TextView> {
+        val is4String = (viewModel.currentTuningPreset.value?.strings?.size ?: 6) <= 4
+        return if (is4String) get4StringKnobs() else get6StringKnobs()
     }
 
     /**
@@ -323,7 +388,10 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun shouldSkipAutoEntry(): Boolean {
         return ActivityManager.isRunningInUserTestHarness() ||
-            requireActivity().intent.getBooleanExtra(MainActivity.EXTRA_SKIP_HOME_AUTO_ENTRY, false)
+                requireActivity().intent.getBooleanExtra(
+                    MainActivity.EXTRA_SKIP_HOME_AUTO_ENTRY,
+                    false
+                )
     }
 
     /**
@@ -379,7 +447,8 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
 
     fun toggleMicrophonePermissionDetails(view: View) {
         val detailText = view.rootView.findViewById<View>(R.id.micPermissionDetailsText) ?: return
-        detailText.visibility = if (detailText.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+        detailText.visibility =
+            if (detailText.visibility == View.VISIBLE) View.GONE else View.VISIBLE
     }
 
     private fun requestMicrophonePermission(
@@ -500,12 +569,13 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
 
         val settings = currentSettings()
         if (viewModel.autoDetectEnabled.value == true) {
-            GuitarTone.findClosestStringIndex(currentFreq, settings.referenceA4Hz)?.let(::updateSelectedString)
+            findClosestStringIndex(currentFreq, settings.referenceA4Hz)
+                ?.let(::updateSelectedString)
         }
 
         val selectedString = getSelectedString()
         val note = TunerMath.noteName(currentFreq, settings.referenceA4Hz)
-        val centDiff = TunerMath.centsOff(currentFreq, selectedString.frequency)
+        val centDiff = TunerMath.centsOff(currentFreq, selectedString.frequency(settings.referenceA4Hz))
         val statusLabel: String
         val statusColor: Int
         when {
@@ -530,9 +600,40 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
         binding.tvPitchStatus.setTextColor(statusColor)
         binding.tvPitchPointer.setTextColor(statusColor)
         binding.tvNumericNote.text = note
-        binding.tvNumericFrequency.text = getString(R.string.home_numeric_frequency_format, currentFreq)
+        binding.tvNumericFrequency.text =
+            getString(R.string.home_numeric_frequency_format, currentFreq)
         binding.tvNumericCents.text = getString(R.string.home_numeric_cents_format, centDiff)
         hidePermissionTip()
+    }
+
+    /**
+     * 在当前乐器的标准弦集合中查找与给定频率最接近的弦索引。
+     */
+    private fun findClosestStringIndex(freq: Float, referenceA4Hz: Int): Int? {
+        if (!freq.isFinite() || freq <= 0f) return null
+        val strings = viewModel.currentStrings(referenceA4Hz)
+        val maxCentOffset = 250f
+        val closest = strings.minByOrNull { string ->
+            abs(TunerMath.centsOff(freq, string.frequency(referenceA4Hz)))
+        } ?: return null
+        val centOffset = abs(TunerMath.centsOff(freq, closest.frequency(referenceA4Hz)))
+        return closest.index.takeIf { centOffset <= maxCentOffset }
+    }
+
+    /**
+     * 乐器选择：弹出三种乐器选择对话框。
+     */
+    fun instrumentSelection(@Suppress("UNUSED_PARAMETER") view: View) {
+        val instruments = InstrumentConfig.ALL
+        val names = instruments.map { getString(it.displayNameRes) }.toTypedArray()
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.home_instrument_select_title))
+            .setItems(names) { _, which ->
+                val selected = instruments.getOrNull(which) ?: return@setItems
+                viewModel.switchInstrument(selected.instrumentType)
+                updateSelectedString(viewModel.selectedIndex.value ?: 0)
+            }
+            .show()
     }
 
     /**
@@ -575,7 +676,7 @@ class HomeFragment : BaseVmFragment<FragmentHomeBinding, HomeViewModel>() {
      * 播放当前选中琴弦的参考音。
      */
     private fun playSelectedStringTone() {
-        tonePreviewPlayer.play(getSelectedString().frequency)
+        tonePreviewPlayer.play(getSelectedString().frequency(currentSettings().referenceA4Hz))
     }
 
     /**
