@@ -6,6 +6,7 @@ import com.dp.guitartuning.domain.model.AppThemeMode
 import com.dp.guitartuning.domain.model.GeneralSettings
 import com.dp.guitartuning.domain.model.MetronomeSettings
 import com.dp.guitartuning.domain.model.MetronomeSoundType
+import com.dp.guitartuning.domain.model.MetronomeTimeSignature
 import com.dp.guitartuning.domain.model.TunerDisplayMode
 import com.dp.guitartuning.domain.model.TunerSettings
 import com.dp.guitartuning.domain.model.TuningSensitivity
@@ -108,6 +109,10 @@ class MetronomeSettingsViewModelTest {
 
         override fun setMetronomeSoundType(soundType: MetronomeSoundType) {
             currentMetronomeSettings = currentMetronomeSettings.copy(soundType = soundType)
+        }
+
+        override fun setMetronomeTimeSignature(timeSignature: MetronomeTimeSignature) {
+            currentMetronomeSettings = currentMetronomeSettings.copy(timeSignature = timeSignature)
         }
 
         override fun setMetronomeAccentEnabled(enabled: Boolean) {

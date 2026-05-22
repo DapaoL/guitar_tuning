@@ -64,6 +64,7 @@
     <string name="tab_tuner">调音器</string>
     <string name="tab_metronome">节拍器</string>
     <string name="tab_settings">设置</string>
+    <string name="metronome_badge">节拍训练</string>
 
     <string name="settings_root_title">设置</string>
     <string name="settings_item_tuner">调音设置</string>
@@ -125,6 +126,12 @@
     <string name="metronome_bpm_invalid">节拍速度无效</string>
     <string name="metronome_play">播放</string>
     <string name="metronome_pause">暂停</string>
+    <string name="metronome_start">开始</string>
+    <string name="metronome_stop">停止</string>
+    <string name="metronome_speed_settings_title">速度设置</string>
+    <string name="metronome_speed_settings_summary">输入目标速度后应用，可在播放中实时调整节拍速度</string>
+    <string name="metronome_time_signature_select">选择节拍拍号</string>
+    <string name="metronome_time_signature_four_four">4/4 拍</string>
 
     <string name="general_settings_title">通用设置</string>
     <string name="general_settings_subtitle">主题、屏幕与音频偏好</string>

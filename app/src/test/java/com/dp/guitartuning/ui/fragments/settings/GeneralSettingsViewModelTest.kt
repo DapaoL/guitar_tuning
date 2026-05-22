@@ -6,6 +6,7 @@ import com.dp.guitartuning.domain.model.AppThemeMode
 import com.dp.guitartuning.domain.model.GeneralSettings
 import com.dp.guitartuning.domain.model.MetronomeSettings
 import com.dp.guitartuning.domain.model.MetronomeSoundType
+import com.dp.guitartuning.domain.model.MetronomeTimeSignature
 import com.dp.guitartuning.domain.model.TunerDisplayMode
 import com.dp.guitartuning.domain.model.TunerSettings
 import com.dp.guitartuning.domain.model.TuningSensitivity
@@ -136,6 +137,7 @@ class GeneralSettingsViewModelTest {
         override fun getMetronomeSettings(): MetronomeSettings = MetronomeSettings()
         override fun setMetronomeLastBpm(lastBpm: Int) = Unit
         override fun setMetronomeSoundType(soundType: MetronomeSoundType) = Unit
+        override fun setMetronomeTimeSignature(timeSignature: MetronomeTimeSignature) = Unit
         override fun setMetronomeAccentEnabled(enabled: Boolean) = Unit
         override fun setMetronomeVibrationEnabled(enabled: Boolean) = Unit
         override fun setMetronomeAccentVibrationEnabled(enabled: Boolean) = Unit

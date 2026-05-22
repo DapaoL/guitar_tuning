@@ -94,12 +94,12 @@ data class InstrumentConfig(
                     id = "standard",
                     displayName = "标准调弦",
                     strings = listOf(
-                        InstrumentString(index = 0, number = "1", label = "高音 E", baseFrequency = 329.63f),
+                        InstrumentString(index = 0, number = "1", label = "E", baseFrequency = 329.63f),
                         InstrumentString(index = 1, number = "2", label = "B", baseFrequency = 246.94f),
                         InstrumentString(index = 2, number = "3", label = "G", baseFrequency = 196.00f),
                         InstrumentString(index = 3, number = "4", label = "D", baseFrequency = 146.83f),
                         InstrumentString(index = 4, number = "5", label = "A", baseFrequency = 110.00f),
-                        InstrumentString(index = 5, number = "6", label = "低音 E", baseFrequency = 82.41f)
+                        InstrumentString(index = 5, number = "6", label = "E", baseFrequency = 82.41f)
                     ),
                     defaultStringIndex = 4
                 )
@@ -121,7 +121,7 @@ data class InstrumentConfig(
                         InstrumentString(index = 0, number = "1", label = "G", baseFrequency = 98.00f),
                         InstrumentString(index = 1, number = "2", label = "D", baseFrequency = 73.42f),
                         InstrumentString(index = 2, number = "3", label = "A", baseFrequency = 55.00f),
-                        InstrumentString(index = 3, number = "4", label = "低音 E", baseFrequency = 41.20f)
+                        InstrumentString(index = 3, number = "4", label = "E", baseFrequency = 41.20f)
                     ),
                     defaultStringIndex = 2
                 )

@@ -10,6 +10,7 @@ object PreferencesConstants {
     const val KEY_TUNER_DISPLAY_MODE = "tunerDisplayMode"
     const val KEY_METRONOME_LAST_BPM = "metronomeLastBpm"
     const val KEY_METRONOME_SOUND_TYPE = "metronomeSoundType"
+    const val KEY_METRONOME_TIME_SIGNATURE = "metronomeTimeSignature"
     const val KEY_METRONOME_ACCENT_ENABLED = "metronomeAccentEnabled"
     const val KEY_METRONOME_VIBRATION_ENABLED = "metronomeVibrationEnabled"
     const val KEY_METRONOME_ACCENT_VIBRATION_ENABLED = "metronomeAccentVibrationEnabled"

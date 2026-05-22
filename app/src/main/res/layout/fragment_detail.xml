@@ -52,7 +52,7 @@
                         android:gravity="center"
                         android:paddingStart="14dp"
                         android:paddingEnd="14dp"
-                        android:text="节拍训练"
+                        android:text="@string/metronome_badge"
                         android:textColor="@color/home_text_primary"
                         android:textSize="13sp" />
 
@@ -62,18 +62,26 @@
                         android:layout_marginTop="18dp"
                         android:fontFamily="@font/poppins_medium"
                         android:includeFontPadding="false"
-                        android:text="节拍器"
+                        android:text="@string/tab_metronome"
                         android:textColor="@color/white"
                         android:textSize="28sp" />
 
                     <TextView
+                        android:id="@+id/tv_poppins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:fontFamily="@font/poppins_medium"
-                        android:text="4/4 拍 · 30 - 300 BPM"
+                        android:gravity="center"
+                        android:onClick="@{page::selectTimeSignature}"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:text="@string/metronome_time_signature_four_four"
                         android:textColor="@color/home_text_muted"
                         android:textSize="14sp" />
+
 
                     <FrameLayout
                         android:layout_width="228dp"
@@ -137,40 +145,7 @@
                         android:layout_height="46dp"
                         android:layout_marginTop="24dp"
                         android:gravity="center"
-                        android:orientation="horizontal"
-                        android:weightSum="4">
-
-                        <View
-                            android:id="@+id/beat_block_1"
-                            android:layout_width="0dp"
-                            android:layout_height="42dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_beat_block_inactive" />
-
-                        <View
-                            android:id="@+id/beat_block_2"
-                            android:layout_width="0dp"
-                            android:layout_height="42dp"
-                            android:layout_marginStart="10dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_beat_block_inactive" />
-
-                        <View
-                            android:id="@+id/beat_block_3"
-                            android:layout_width="0dp"
-                            android:layout_height="42dp"
-                            android:layout_marginStart="10dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_beat_block_inactive" />
-
-                        <View
-                            android:id="@+id/beat_block_4"
-                            android:layout_width="0dp"
-                            android:layout_height="42dp"
-                            android:layout_marginStart="10dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_beat_block_inactive" />
-                    </LinearLayout>
+                        android:orientation="horizontal" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -188,7 +163,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/poppins_medium"
-                        android:text="速度设置"
+                        android:text="@string/metronome_speed_settings_title"
                         android:textColor="@color/home_text_primary"
                         android:textSize="16sp" />
 
@@ -197,7 +172,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:fontFamily="@font/poppins_medium"
-                        android:text="输入目标速度后应用，可在播放中实时调整节拍速度"
+                        android:text="@string/metronome_speed_settings_summary"
                         android:textColor="@color/home_text_secondary"
                         android:textSize="13sp" />
 
@@ -253,7 +228,7 @@
                         android:fontFamily="@font/poppins_medium"
                         android:onClick="@{page::start}"
                         android:stateListAnimator="@null"
-                        android:text="开始"
+                        android:text="@string/metronome_start"
                         android:textAllCaps="false"
                         android:textColor="@color/home_text_primary"
                         android:textSize="16sp" />
@@ -267,7 +242,7 @@
                         android:fontFamily="@font/poppins_medium"
                         android:onClick="@{page::stop}"
                         android:stateListAnimator="@null"
-                        android:text="停止"
+                        android:text="@string/metronome_stop"
                         android:textAllCaps="false"
                         android:textColor="@color/home_text_primary"
                         android:textSize="16sp" />

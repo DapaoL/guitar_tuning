@@ -2,17 +2,26 @@ package com.dp.guitartuning.ui.fragments.detail
 
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.media.AudioFormat
 import android.media.AudioManager
 import android.media.AudioTrack
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.LinearInterpolator
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.PopupWindow
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import be.tarsos.dsp.AudioEvent
 import be.tarsos.dsp.AudioGenerator
 import be.tarsos.dsp.AudioProcessor
@@ -22,6 +31,7 @@ import com.dp.guitartuning.domain.model.MetronomeBeatType
 import com.dp.guitartuning.domain.model.MetronomePlaybackConfig
 import com.dp.guitartuning.domain.model.MetronomeSettings
 import com.dp.guitartuning.domain.model.MetronomeSoundType
+import com.dp.guitartuning.domain.model.MetronomeTimeSignature
 import com.dp.guitartuning.ui.base.BaseVmFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.PI
@@ -43,13 +53,14 @@ class DetailFragment : BaseVmFragment<FragmentDetailBinding, DetailViewModel>() 
     private var bpm = MetronomeSettings.DEFAULT_BPM
     private var ringRotationAnimator: ObjectAnimator? = null
     private var isUserRotatingRing = false
+    private var timeSignatureDropdownWindow: PopupWindow? = null
     private val beatHandler = Handler(Looper.getMainLooper())
     private var visualBeatIndex = 0
     private val beatVisualizerRunnable = object : Runnable {
         override fun run() {
             showBeat(visualBeatIndex)
             triggerBeatVibration(visualBeatIndex)
-            visualBeatIndex = (visualBeatIndex + 1) % BEATS_PER_BAR
+            visualBeatIndex = (visualBeatIndex + 1) % playbackConfig.timeSignature.beatsPerBar
             beatHandler.postDelayed(this, beatIntervalMillis())
         }
     }
@@ -62,6 +73,7 @@ class DetailFragment : BaseVmFragment<FragmentDetailBinding, DetailViewModel>() 
         binding.vm = viewModel
         binding.lifecycleOwner = this
         metronomeVibrator = MetronomeVibrator(requireContext())
+        setupTimeSignatureSelector()
         setupRingSpeedControl()
         refreshMetronomeSettings(applyStoredBpm = true)
         resetBeatVisualizer()
@@ -121,8 +133,58 @@ class DetailFragment : BaseVmFragment<FragmentDetailBinding, DetailViewModel>() 
         syncCustomBpm()
     }
 
+    fun selectTimeSignature(@Suppress("UNUSED_PARAMETER") view: View) {
+        if (timeSignatureDropdownWindow?.isShowing == true) {
+            dismissTimeSignatureDropdown()
+            return
+        }
+
+        val anchor = binding.tvPoppins
+        val contentView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.popup_time_signature_dropdown, null)
+        val popup = PopupWindow(
+            contentView,
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            true
+        ).apply {
+            isOutsideTouchable = true
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            elevation = dpToPx(DROPDOWN_ELEVATION_DP).toFloat()
+            setOnDismissListener {
+                timeSignatureDropdownWindow = null
+                setTimeSignatureDropdownExpanded(false)
+            }
+        }
+
+        timeSignatureDropdownWindow = popup
+        bindTimeSignatureDropdownOptions(contentView, popup)
+
+        val minWidth = maxOf(anchor.width + dpToPx(28), dpToPx(160))
+        contentView.minimumWidth = minWidth
+        contentView.measure(
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        )
+
+        val popupWidth = maxOf(contentView.measuredWidth, minWidth)
+        val xOffset = (anchor.width - popupWidth) / 2
+
+        setTimeSignatureDropdownExpanded(true)
+        popup.width = popupWidth
+        popup.showAsDropDown(anchor, xOffset, dpToPx(8))
+        contentView.alpha = 0f
+        contentView.translationY = -dpToPx(8).toFloat()
+        contentView.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .setDuration(160L)
+            .start()
+    }
+
     override fun onDestroyView() {
         stop(requireView())
+        dismissTimeSignatureDropdown()
         beatHandler.removeCallbacks(beatVisualizerRunnable)
         metronomeVibrator = null
         super.onDestroyView()
@@ -133,12 +195,141 @@ class DetailFragment : BaseVmFragment<FragmentDetailBinding, DetailViewModel>() 
         volumeBoostEnabled = viewModel.getVolumeBoostEnabled()
         val targetBpm = if (applyStoredBpm) settings.lastBpm else bpm
         playbackConfig = MetronomePlaybackConfig.fromSettings(settings).copy(bpm = targetBpm)
+        updateTimeSignatureLabel()
+        rebuildBeatVisualizer()
         applyBpm(
             newBpm = targetBpm,
             updateInput = applyStoredBpm,
             updateRing = applyStoredBpm,
             persist = false
         )
+    }
+
+    private fun setupTimeSignatureSelector() {
+        binding.tvPoppins.setOnClickListener { view -> selectTimeSignature(view) }
+        binding.tvPoppins.contentDescription = getString(R.string.metronome_time_signature_select)
+        setTimeSignatureDropdownExpanded(false)
+    }
+
+    private fun updateTimeSignatureLabel() {
+        binding.tvPoppins.text = playbackConfig.timeSignature.label
+    }
+
+    private fun bindTimeSignatureDropdownOptions(contentView: View, popup: PopupWindow) {
+        val optionViews = listOf(
+            TimeSignatureOptionViews(
+                timeSignature = MetronomeTimeSignature.FOUR_FOUR,
+                containerId = R.id.time_signature_option_four_four,
+                labelId = R.id.time_signature_option_four_four_text,
+                checkId = R.id.time_signature_option_four_four_check
+            ),
+            TimeSignatureOptionViews(
+                timeSignature = MetronomeTimeSignature.THREE_FOUR,
+                containerId = R.id.time_signature_option_three_four,
+                labelId = R.id.time_signature_option_three_four_text,
+                checkId = R.id.time_signature_option_three_four_check
+            ),
+            TimeSignatureOptionViews(
+                timeSignature = MetronomeTimeSignature.TWO_FOUR,
+                containerId = R.id.time_signature_option_two_four,
+                labelId = R.id.time_signature_option_two_four_text,
+                checkId = R.id.time_signature_option_two_four_check
+            ),
+            TimeSignatureOptionViews(
+                timeSignature = MetronomeTimeSignature.SIX_EIGHT,
+                containerId = R.id.time_signature_option_six_eight,
+                labelId = R.id.time_signature_option_six_eight_text,
+                checkId = R.id.time_signature_option_six_eight_check
+            ),
+            TimeSignatureOptionViews(
+                timeSignature = MetronomeTimeSignature.FIVE_FOUR,
+                containerId = R.id.time_signature_option_five_four,
+                labelId = R.id.time_signature_option_five_four_text,
+                checkId = R.id.time_signature_option_five_four_check
+            ),
+            TimeSignatureOptionViews(
+                timeSignature = MetronomeTimeSignature.SEVEN_EIGHT,
+                containerId = R.id.time_signature_option_seven_eight,
+                labelId = R.id.time_signature_option_seven_eight_text,
+                checkId = R.id.time_signature_option_seven_eight_check
+            ),
+            TimeSignatureOptionViews(
+                timeSignature = MetronomeTimeSignature.TWELVE_EIGHT,
+                containerId = R.id.time_signature_option_twelve_eight,
+                labelId = R.id.time_signature_option_twelve_eight_text,
+                checkId = R.id.time_signature_option_twelve_eight_check
+            )
+        )
+
+        optionViews.forEach { option ->
+            bindTimeSignatureOption(contentView, option, popup)
+        }
+    }
+
+    private fun bindTimeSignatureOption(
+        contentView: View,
+        option: TimeSignatureOptionViews,
+        popup: PopupWindow
+    ) {
+        val container = contentView.findViewById<LinearLayout>(option.containerId)
+        val label = contentView.findViewById<TextView>(option.labelId)
+        val check = contentView.findViewById<ImageView>(option.checkId)
+        val isSelected = playbackConfig.timeSignature == option.timeSignature
+
+        container.isSelected = isSelected
+        label.text = option.timeSignature.label
+        label.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                if (isSelected) R.color.home_text_primary else R.color.home_text_secondary
+            )
+        )
+        check.visibility = if (isSelected) View.VISIBLE else View.INVISIBLE
+
+        container.setOnClickListener {
+            if (!isSelected) {
+                applyTimeSignature(option.timeSignature, persist = true)
+            }
+            popup.dismiss()
+        }
+    }
+
+    private fun applyTimeSignature(
+        timeSignature: MetronomeTimeSignature,
+        persist: Boolean
+    ) {
+        playbackConfig = playbackConfig.copy(timeSignature = timeSignature)
+        if (persist) {
+            viewModel.setMetronomeTimeSignature(timeSignature)
+        }
+
+        visualBeatIndex = 0
+        updateTimeSignatureLabel()
+        rebuildBeatVisualizer()
+        metronome?.updateConfig(playbackConfig)
+        if (generator != null) {
+            beatHandler.removeCallbacks(beatVisualizerRunnable)
+            beatHandler.post(beatVisualizerRunnable)
+        }
+    }
+
+    private fun setTimeSignatureDropdownExpanded(expanded: Boolean) {
+        val arrowDrawable = AppCompatResources.getDrawable(
+            requireContext(),
+            if (expanded) R.drawable.ic_home_dropdown_arrow_up else R.drawable.right_arrow
+        )
+        binding.tvPoppins.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            null,
+            null,
+            arrowDrawable,
+            null
+        )
+        binding.tvPoppins.compoundDrawablePadding = dpToPx(4)
+    }
+
+    private fun dismissTimeSignatureDropdown() {
+        timeSignatureDropdownWindow?.dismiss()
+        timeSignatureDropdownWindow = null
     }
 
     private fun applyKeepScreenOn() {
@@ -314,6 +505,31 @@ class DetailFragment : BaseVmFragment<FragmentDetailBinding, DetailViewModel>() 
         resetBeatVisualizer()
     }
 
+    private fun rebuildBeatVisualizer() {
+        val container = binding.beatVisualizer
+        val beatsPerBar = playbackConfig.timeSignature.beatsPerBar
+        container.removeAllViews()
+        container.weightSum = beatsPerBar.toFloat()
+
+        repeat(beatsPerBar) { index ->
+            val beatBlock = View(requireContext()).apply {
+                setBackgroundResource(R.drawable.bg_beat_block_inactive)
+                layoutParams = LinearLayout.LayoutParams(
+                    0,
+                    dpToPx(BEAT_BLOCK_HEIGHT_DP),
+                    1f
+                ).apply {
+                    if (index > 0) {
+                        marginStart = dpToPx(beatBlockSpacingDp(beatsPerBar))
+                    }
+                }
+            }
+            container.addView(beatBlock)
+        }
+
+        resetBeatVisualizer()
+    }
+
     private fun resetBeatVisualizer() {
         beatBlocks().forEach { block ->
             block.setBackgroundResource(R.drawable.bg_beat_block_inactive)
@@ -355,12 +571,15 @@ class DetailFragment : BaseVmFragment<FragmentDetailBinding, DetailViewModel>() 
         }
     }
 
-    private fun beatBlocks() = listOf(
-        binding.beatBlock1,
-        binding.beatBlock2,
-        binding.beatBlock3,
-        binding.beatBlock4
-    )
+    private fun beatBlocks(): List<View> {
+        return (0 until binding.beatVisualizer.childCount).map { index ->
+            binding.beatVisualizer.getChildAt(index)
+        }
+    }
+
+    private fun beatBlockSpacingDp(beatsPerBar: Int): Int {
+        return if (beatsPerBar >= 8) 4 else 10
+    }
 
     private fun beatIntervalMillis(): Long {
         return (60_000L / bpm.coerceIn(MIN_BPM, MAX_BPM)).coerceAtLeast(1L)
@@ -373,6 +592,10 @@ class DetailFragment : BaseVmFragment<FragmentDetailBinding, DetailViewModel>() 
 
     private fun ringRotationSpeedMultiplier(): Float {
         return RING_ROTATION_SPEED_MULTIPLIER.coerceAtLeast(0.1f)
+    }
+
+    private fun dpToPx(value: Int): Int {
+        return (value * resources.displayMetrics.density).roundToInt()
     }
 
     private fun ringRotationFromBpm(value: Int): Float {
@@ -393,14 +616,22 @@ class DetailFragment : BaseVmFragment<FragmentDetailBinding, DetailViewModel>() 
         private const val MIN_BPM = MetronomeSettings.MIN_BPM
         private const val MAX_BPM = MetronomeSettings.MAX_BPM
         private const val BPM_RANGE = MAX_BPM - MIN_BPM
-        private const val BEATS_PER_BAR = 4
         private const val BEAT_PULSE_MILLIS = 130L
+        private const val BEAT_BLOCK_HEIGHT_DP = 42
+        private const val DROPDOWN_ELEVATION_DP = 12
         private const val FULL_ROTATION_DEGREES = 360f
         private const val QUARTER_ROTATION_DEGREES = 90f
         private const val RING_ROTATION_BEATS_PER_CYCLE = 4f
         private const val RING_ROTATION_SPEED_MULTIPLIER = 1f
         private const val VOLUME_BOOST_FACTOR = 1.4
     }
+
+    private data class TimeSignatureOptionViews(
+        val timeSignature: MetronomeTimeSignature,
+        val containerId: Int,
+        val labelId: Int,
+        val checkId: Int
+    )
 
     private class MetronomeProcessor(
         private val sampleRate: Int,
@@ -439,7 +670,7 @@ class DetailFragment : BaseVmFragment<FragmentDetailBinding, DetailViewModel>() 
 
                 if (sampleInBeat >= beatIntervalSamples) {
                     sampleInBeat = 0L
-                    beatIndex = (beatIndex + 1) % BEATS_PER_BAR
+                    beatIndex = (beatIndex + 1) % activeConfig.timeSignature.beatsPerBar
                     beatIntervalSamples = intervalSamples(activeConfig.bpm)
                 }
             }

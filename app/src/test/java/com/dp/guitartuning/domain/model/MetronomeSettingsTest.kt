@@ -16,6 +16,7 @@ class MetronomeSettingsTest {
         assertEquals(300, MetronomeSettings.MAX_BPM)
         assertEquals(120, defaults.lastBpm)
         assertEquals(MetronomeSoundType.WOOD_BLOCK, defaults.soundType)
+        assertEquals(MetronomeTimeSignature.FOUR_FOUR, defaults.timeSignature)
         assertTrue(defaults.accentEnabled)
         assertFalse(defaults.vibrationEnabled)
         assertTrue(defaults.accentVibrationEnabled)
@@ -37,6 +38,29 @@ class MetronomeSettingsTest {
     }
 
     @Test
+    fun timeSignature_fromStorageFallsBackToFourFour() {
+        assertEquals(MetronomeTimeSignature.FOUR_FOUR, MetronomeTimeSignature.fromStorage(null))
+        assertEquals(MetronomeTimeSignature.FOUR_FOUR, MetronomeTimeSignature.fromStorage("unknown"))
+        assertEquals(MetronomeTimeSignature.THREE_FOUR, MetronomeTimeSignature.fromStorage("three_four"))
+    }
+
+    @Test
+    fun timeSignature_presetsContainCommonPracticeMeters() {
+        assertEquals(
+            listOf(
+                MetronomeTimeSignature.FOUR_FOUR,
+                MetronomeTimeSignature.THREE_FOUR,
+                MetronomeTimeSignature.TWO_FOUR,
+                MetronomeTimeSignature.SIX_EIGHT,
+                MetronomeTimeSignature.FIVE_FOUR,
+                MetronomeTimeSignature.SEVEN_EIGHT,
+                MetronomeTimeSignature.TWELVE_EIGHT
+            ),
+            MetronomeTimeSignature.PRESETS
+        )
+    }
+
+    @Test
     fun playbackConfig_usesAccentAndVibrationRules() {
         val accentConfig = MetronomePlaybackConfig(
             accentEnabled = true,
@@ -55,5 +79,23 @@ class MetronomeSettingsTest {
         assertEquals(MetronomeBeatType.REGULAR, regularConfig.beatTypeFor(0))
         assertFalse(regularConfig.shouldVibrate(0))
         assertFalse(noVibrationConfig.shouldVibrate(0))
+    }
+
+    @Test
+    fun playbackConfig_usesSelectedTimeSignatureForAccentCycle() {
+        val threeFourConfig = MetronomePlaybackConfig(
+            timeSignature = MetronomeTimeSignature.THREE_FOUR,
+            accentEnabled = true
+        )
+        val sixEightConfig = threeFourConfig.copy(timeSignature = MetronomeTimeSignature.SIX_EIGHT)
+
+        assertEquals(MetronomeBeatType.ACCENT, threeFourConfig.beatTypeFor(0))
+        assertEquals(MetronomeBeatType.REGULAR, threeFourConfig.beatTypeFor(1))
+        assertEquals(MetronomeBeatType.REGULAR, threeFourConfig.beatTypeFor(2))
+        assertEquals(MetronomeBeatType.ACCENT, threeFourConfig.beatTypeFor(3))
+
+        assertEquals(MetronomeBeatType.ACCENT, sixEightConfig.beatTypeFor(0))
+        assertEquals(MetronomeBeatType.REGULAR, sixEightConfig.beatTypeFor(5))
+        assertEquals(MetronomeBeatType.ACCENT, sixEightConfig.beatTypeFor(6))
     }
 }

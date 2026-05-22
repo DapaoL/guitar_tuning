@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/time_signature_dropdown_root"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_home_dropdown_panel"
+    android:elevation="12dp"
+    android:minWidth="160dp"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <LinearLayout
+        android:id="@+id/time_signature_option_four_four"
+        style="@style/TimeSignatureDropdownItem">
+
+        <TextView
+            android:id="@+id/time_signature_option_four_four_text"
+            style="@style/TimeSignatureDropdownText" />
+
+        <ImageView
+            android:id="@+id/time_signature_option_four_four_check"
+            style="@style/TimeSignatureDropdownCheck" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/time_signature_option_three_four"
+        style="@style/TimeSignatureDropdownItem"
+        android:layout_marginTop="4dp">
+
+        <TextView
+            android:id="@+id/time_signature_option_three_four_text"
+            style="@style/TimeSignatureDropdownText" />
+
+        <ImageView
+            android:id="@+id/time_signature_option_three_four_check"
+            style="@style/TimeSignatureDropdownCheck" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/time_signature_option_two_four"
+        style="@style/TimeSignatureDropdownItem"
+        android:layout_marginTop="4dp">
+
+        <TextView
+            android:id="@+id/time_signature_option_two_four_text"
+            style="@style/TimeSignatureDropdownText" />
+
+        <ImageView
+            android:id="@+id/time_signature_option_two_four_check"
+            style="@style/TimeSignatureDropdownCheck" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/time_signature_option_six_eight"
+        style="@style/TimeSignatureDropdownItem"
+        android:layout_marginTop="4dp">
+
+        <TextView
+            android:id="@+id/time_signature_option_six_eight_text"
+            style="@style/TimeSignatureDropdownText" />
+
+        <ImageView
+            android:id="@+id/time_signature_option_six_eight_check"
+            style="@style/TimeSignatureDropdownCheck" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/time_signature_option_five_four"
+        style="@style/TimeSignatureDropdownItem"
+        android:layout_marginTop="4dp">
+
+        <TextView
+            android:id="@+id/time_signature_option_five_four_text"
+            style="@style/TimeSignatureDropdownText" />
+
+        <ImageView
+            android:id="@+id/time_signature_option_five_four_check"
+            style="@style/TimeSignatureDropdownCheck" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/time_signature_option_seven_eight"
+        style="@style/TimeSignatureDropdownItem"
+        android:layout_marginTop="4dp">
+
+        <TextView
+            android:id="@+id/time_signature_option_seven_eight_text"
+            style="@style/TimeSignatureDropdownText" />
+
+        <ImageView
+            android:id="@+id/time_signature_option_seven_eight_check"
+            style="@style/TimeSignatureDropdownCheck" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/time_signature_option_twelve_eight"
+        style="@style/TimeSignatureDropdownItem"
+        android:layout_marginTop="4dp">
+
+        <TextView
+            android:id="@+id/time_signature_option_twelve_eight_text"
+            style="@style/TimeSignatureDropdownText" />
+
+        <ImageView
+            android:id="@+id/time_signature_option_twelve_eight_check"
+            style="@style/TimeSignatureDropdownCheck" />
+    </LinearLayout>
+
+</LinearLayout>

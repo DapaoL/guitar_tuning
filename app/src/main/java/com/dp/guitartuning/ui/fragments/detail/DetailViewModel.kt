@@ -3,6 +3,7 @@ package com.dp.guitartuning.ui.fragments.detail
 import androidx.lifecycle.ViewModel
 import com.dp.guitartuning.common.data.preferences.Preferences
 import com.dp.guitartuning.domain.model.MetronomeSettings
+import com.dp.guitartuning.domain.model.MetronomeTimeSignature
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -17,6 +18,10 @@ class DetailViewModel @Inject constructor(
 
     fun setMetronomeLastBpm(lastBpm: Int) {
         preferences.setMetronomeLastBpm(lastBpm)
+    }
+
+    fun setMetronomeTimeSignature(timeSignature: MetronomeTimeSignature) {
+        preferences.setMetronomeTimeSignature(timeSignature)
     }
 
     fun getKeepScreenOnEnabled(): Boolean {

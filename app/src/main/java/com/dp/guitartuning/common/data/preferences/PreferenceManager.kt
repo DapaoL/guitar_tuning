@@ -5,6 +5,7 @@ import com.dp.guitartuning.domain.model.AppThemeMode
 import com.dp.guitartuning.domain.model.GeneralSettings
 import com.dp.guitartuning.domain.model.MetronomeSettings
 import com.dp.guitartuning.domain.model.MetronomeSoundType
+import com.dp.guitartuning.domain.model.MetronomeTimeSignature
 import com.dp.guitartuning.domain.model.TunerDisplayMode
 import com.dp.guitartuning.domain.model.TunerSettings
 import com.dp.guitartuning.domain.model.TuningSensitivity
@@ -79,10 +80,15 @@ class PreferenceManager @Inject constructor(
             MetronomeSettings.DEFAULT_BPM
         )
         val soundType = safeGetString(PreferencesConstants.KEY_METRONOME_SOUND_TYPE, null)
+        val timeSignature = safeGetString(
+            PreferencesConstants.KEY_METRONOME_TIME_SIGNATURE,
+            null
+        )
 
         return MetronomeSettings(
             lastBpm = MetronomeSettings.sanitizeBpm(lastBpm),
             soundType = MetronomeSoundType.fromStorage(soundType),
+            timeSignature = MetronomeTimeSignature.fromStorage(timeSignature),
             accentEnabled = safeGetBoolean(
                 PreferencesConstants.KEY_METRONOME_ACCENT_ENABLED,
                 true
@@ -114,6 +120,12 @@ class PreferenceManager @Inject constructor(
     override fun setMetronomeSoundType(soundType: MetronomeSoundType) {
         preferences.edit()
             .putString(PreferencesConstants.KEY_METRONOME_SOUND_TYPE, soundType.name)
+            .apply()
+    }
+
+    override fun setMetronomeTimeSignature(timeSignature: MetronomeTimeSignature) {
+        preferences.edit()
+            .putString(PreferencesConstants.KEY_METRONOME_TIME_SIGNATURE, timeSignature.name)
             .apply()
     }
 

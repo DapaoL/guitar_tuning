@@ -4,6 +4,7 @@ import com.dp.guitartuning.domain.model.AppThemeMode
 import com.dp.guitartuning.domain.model.GeneralSettings
 import com.dp.guitartuning.domain.model.MetronomeSettings
 import com.dp.guitartuning.domain.model.MetronomeSoundType
+import com.dp.guitartuning.domain.model.MetronomeTimeSignature
 import com.dp.guitartuning.domain.model.TunerDisplayMode
 import com.dp.guitartuning.domain.model.TunerSettings
 import com.dp.guitartuning.domain.model.TuningSensitivity
@@ -36,6 +37,8 @@ interface Preferences {
 
     fun setMetronomeSoundType(soundType: MetronomeSoundType)
 
+    fun setMetronomeTimeSignature(timeSignature: MetronomeTimeSignature)
+
     fun setMetronomeAccentEnabled(enabled: Boolean)
 
     fun setMetronomeVibrationEnabled(enabled: Boolean)
@@ -52,4 +55,3 @@ interface Preferences {
 
     fun setGeneralVolumeBoostEnabled(enabled: Boolean)
 }
-
